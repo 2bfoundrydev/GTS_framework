@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import {usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 // import { useRouter, usePathname } from 'next/navigation';
 
 // List of public routes that don't require authentication
@@ -27,7 +27,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     }
   }, [user, isLoading, pathname]);
 
-  // Show loading state only if actually loading
+  // Show loading state only while auth is being initialized
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col space-y-4 items-center justify-center">
@@ -37,10 +37,17 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     );
   }
 
-  // Only render children if we're on a public route or user is authenticated
+  // Only render children if we're on a public route or user is authenticated.
+  // For protected routes with no user, we rely on the effect above to redirect.
   if (PUBLIC_ROUTES.includes(pathname) || user) {
     return <>{children}</>;
   }
 
-  return null;
+  // While redirecting away from a protected route, render a minimal fallback
+  return (
+    <div className="min-h-screen flex flex-col space-y-4 items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div>Redirecting to login…</div>
+    </div>
+  );
 } 

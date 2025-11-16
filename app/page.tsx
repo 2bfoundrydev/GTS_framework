@@ -195,8 +195,15 @@ export default function LandingPage() {
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
+  const showDevBanner = process.env.NEXT_PUBLIC_DEV_BANNER === 'true';
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] relative">
+      {showDevBanner && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-semibold shadow-lg">
+          DEV ENVIRONMENT
+        </div>
+      )}
       {/* Enhanced Sticky Navigation */}
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-neutral-darker/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
