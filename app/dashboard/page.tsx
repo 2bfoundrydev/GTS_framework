@@ -2,7 +2,7 @@
 
 // import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/utils/supabase';
+import { createClient } from '@/utils/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 
@@ -85,8 +85,6 @@ const recentActivity = [
 ];
 
 export default function Dashboard() {
-
-  
   // const { isConnected } = useWebSocket();
   // const [fullResponse, setFullResponse] = useState('');
   const { user, isSubscriber, isLoading: isAuthLoading } = useAuth();
@@ -159,6 +157,7 @@ export default function Dashboard() {
     if (user?.id) {
       // Check if user has completed onboarding
       const checkOnboarding = async () => {
+        const supabase = createClient();
         const { data } = await supabase
           .from('user_preferences')
           .select('has_completed_onboarding')

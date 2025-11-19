@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/utils/supabase';
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import { createClient } from '@/utils/supabase/client';
 import { 
   Session, 
   User, 
@@ -33,6 +33,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const supabase = useMemo(() => createClient(), []);
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Subscription check error:', error);
       setIsSubscriber(false);
     }
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     let mounted = true;
@@ -135,7 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         unsubscribe();
       }
     };
-  }, [checkSubscription]);
+  }, [checkSubscription, supabase]);
 
   const value = {
     user,

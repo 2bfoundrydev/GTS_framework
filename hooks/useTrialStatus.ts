@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/utils/supabase';
+import { createClient } from '@/utils/supabase/client';
 
 export function useTrialStatus() {
   const { user } = useAuth();
@@ -18,6 +18,7 @@ export function useTrialStatus() {
       }
 
       try {
+        const supabase = createClient();
         // First check if user has an active subscription
         const { data: subscription } = await supabase
           .from('subscriptions')

@@ -1,7 +1,7 @@
 'use client'
 
 import { PostHogProvider as PHProvider } from 'posthog-js/react'
-import { useEffect, useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import PostHogPageView from '@/components/PostHogPageView'
 import { initPostHog } from '@/utils/posthog'
 
