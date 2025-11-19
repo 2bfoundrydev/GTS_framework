@@ -30,28 +30,28 @@ const dashboardMetrics = [
     title: "Total Users",
     value: "1,234",
     change: "+12.3%",
-    icon: <Users className="h-6 w-6 text-primary" />,
+    icon: <Users className="h-6 w-6 text-brand-500" />,
     trend: "up"
   },
   {
     title: "Revenue",
     value: "$12.4k",
     change: "+8.2%",
-    icon: <CreditCard className="h-6 w-6 text-primary" />,
+    icon: <CreditCard className="h-6 w-6 text-brand-500" />,
     trend: "up"
   },
   {
     title: "Active Sessions",
     value: "432",
     change: "-3.1%",
-    icon: <Activity className="h-6 w-6 text-primary" />,
+    icon: <Activity className="h-6 w-6 text-brand-500" />,
     trend: "down"
   },
   {
     title: "Growth Rate",
     value: "18.2%",
     change: "+2.4%",
-    icon: <TrendingUp className="h-6 w-6 text-primary" />,
+    icon: <TrendingUp className="h-6 w-6 text-brand-500" />,
     trend: "up"
   }
 ];
@@ -209,16 +209,16 @@ export default function Dashboard() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120]">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120]">
       {/* Dashboard Header */}
-      <div className="bg-white dark:bg-neutral-dark border-b border-slate-200 dark:border-slate-700">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Dashboard Overview
             </h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-slate-600 dark:text-slate-300">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 {isInTrial ? "Trial Period" : "Premium Plan"}
               </span>
             </div>
@@ -236,10 +236,10 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white dark:bg-neutral-dark rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700"
+              className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
             >
               <div className="flex items-center justify-between">
-                <div className="p-2 bg-primary/10 dark:bg-primary-light/10 rounded-lg">
+                <div className="p-2 bg-brand-500/10 dark:bg-brand-500-light/10 rounded-lg">
                   {metric.icon}
                 </div>
                 <span className={`text-sm font-medium ${
@@ -248,10 +248,10 @@ export default function Dashboard() {
                   {metric.change}
                 </span>
               </div>
-              <h3 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
+              <h3 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
                 {metric.value}
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {metric.title}
               </p>
             </motion.div>
@@ -261,23 +261,23 @@ export default function Dashboard() {
         {/* Activity Feed */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Chart Section */}
-          <div className="lg:col-span-2 bg-white dark:bg-neutral-dark rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Analytics Overview
               </h3>
-              <BarChart3 className="h-5 w-5 text-slate-400" />
+              <BarChart3 className="h-5 w-5 text-gray-400" />
             </div>
-            <div className="h-64 flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
-              <p className="text-slate-400 dark:text-slate-500">
+            <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+              <p className="text-gray-400 dark:text-gray-500">
                 Chart Placeholder
               </p>
             </div>
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white dark:bg-neutral-dark rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
               Recent Activity
             </h3>
             <div className="space-y-4">
@@ -288,14 +288,14 @@ export default function Dashboard() {
                   animate={{ opacity: 1, x: 0 }}
                   className="flex items-center space-x-3 text-sm"
                 >
-                  <div className="p-2 bg-primary/10 dark:bg-primary-light/10 rounded-lg">
+                  <div className="p-2 bg-brand-500/10 dark:bg-brand-500-light/10 rounded-lg">
                     {activity.icon}
                   </div>
                   <div>
-                    <p className="text-slate-900 dark:text-white">
+                    <p className="text-gray-900 dark:text-white">
                       {activity.action}
                     </p>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs">
+                    <p className="text-gray-500 dark:text-gray-400 text-xs">
                       {activity.timestamp}
                     </p>
                   </div>

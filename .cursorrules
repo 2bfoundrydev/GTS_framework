@@ -1,0 +1,112 @@
+# Core behavior
+
+- Be concise and get to the point. Do not be talkative.
+- Answer exactly the question that was asked, nothing extra.
+- If unclear, ask one short clarifying question.
+- Do not propose additional features, abstractions, refactors, or tools unless explicitly requested.
+
+# Editing code
+
+- Do NOT modify code automatically unless explicitly asked.
+- Prefer small, incremental changes over large rewrites.
+- Do not refactor or “clean up” unrelated code.
+- Before applying non-trivial changes, outline the plan in 2–4 short bullet points.
+- Keep all code **simple**, readable, and minimal. Avoid clever or unnecessary abstractions.
+- Prefer **pure functions** whenever possible. No hidden side-effects unless required.
+
+# File and project scope
+
+- Change only the current file by default.
+- Do not modify more than 1–2 files without explicit permission.
+- Hard limit: never change more than 3 files in a single request.
+- Do not create, delete, or rename files or folders unless I clearly ask for it.
+- Do not introduce new dependencies without explicit approval.
+
+# Output format
+
+- For code edits, output a minimal diff or only the necessary code.
+- Keep explanations short (a few sentences or bullets).
+- Do not restate my question.
+- Prefer bullet points over long paragraphs.
+
+# Stack and style
+
+- Assume a modern TypeScript / Next.js stack.
+- Use idiomatic TypeScript with strict typing.
+- Follow the existing project structure and ESLint rules.
+- Keep functions and components small and focused.
+- Default to React Server Components unless otherwise required.
+- Avoid unnecessary complexity, patterns, or abstractions.
+
+# Comments and commits
+
+- All code comments must be in English.
+- All commit messages must be in English, imperative mood (e.g., "Add API handler", "Fix validation logic").
+
+# Safety and validation
+
+- If a requested change may break behavior or introduce risk, warn me briefly before applying it.
+- If unsure — ask instead of guessing or making broad changes.
+
+# GTS Framework - Go and Try Your Ideas
+
+## Project Overview
+This is a Next.js 15 SaaS starter template for rapid idea validation.
+
+**Stack:**
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- Supabase (Auth + Database)
+- Stripe (Payments)
+- Tailwind CSS v4
+- PostHog (Analytics)
+
+## Core Principles
+
+### 1. Architecture
+- Use App Router (`app/` directory)
+- Client components: `'use client'` directive required
+- Server components by default
+- API routes in `app/api/`
+
+### 2. Authentication
+- Supabase Auth for user management
+- Protected routes via `ProtectedRoute` wrapper
+- Public routes: `/`, `/login`, `/signup`, `/verify-email`, `/reset-password`, `/update-password`
+
+### 3. Code Style
+- Always use TypeScript
+- Use functional components with hooks
+- Keep components focused and small
+- Prefer composition over prop drilling
+- Use descriptive variable names
+
+### 4. Error Handling
+- Always handle errors gracefully
+- Show user-friendly error messages
+- Log errors to console in development
+- Never expose sensitive data in errors
+
+### 5. Performance
+- Optimize images with Next.js Image
+- Use dynamic imports for heavy components
+- Minimize client-side JavaScript
+- Cache API responses when appropriate
+
+## File Organization
+```
+app/           - Pages and API routes
+components/    - Reusable React components
+contexts/      - React Context providers
+hooks/         - Custom React hooks
+utils/         - Utility functions
+types/         - TypeScript types
+public/        - Static assets
+```
+
+## Important Notes
+- **DO NOT** modify `app/globals.css` - it's from reference project (TailAdmin)
+- Always test authentication flows after changes
+- Verify Stripe webhooks in development with Stripe CLI
+

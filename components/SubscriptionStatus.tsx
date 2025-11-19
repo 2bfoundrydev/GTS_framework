@@ -21,7 +21,7 @@ export function SubscriptionStatus() {
         </div>
         <button
           onClick={() => router.push('/profile')}
-          className="bg-primary hover:bg-primary-darker text-white px-6 py-2 rounded-lg"
+          className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-2 rounded-lg"
         >
           View Subscription Details
         </button>

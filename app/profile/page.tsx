@@ -174,7 +174,7 @@ function ProfileContent() {
             <div className="text-red-500 dark:text-red-400">{error}</div>
           ) : isLoadingSubscription ? (
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
               <span>Loading subscription details...</span>
             </div>
           ) : subscription ? (
@@ -191,7 +191,7 @@ function ProfileContent() {
                 <div className="mt-4">
                   <Link
                     href="/pay"
-                    className="inline-block px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-full shadow-subtle hover:shadow-hover transition-all"
+                    className="inline-block px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full shadow-subtle hover:shadow-hover transition-all"
                   >
                     Resubscribe
                   </Link>

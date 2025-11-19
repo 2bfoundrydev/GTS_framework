@@ -57,7 +57,7 @@ function VerifyEmailContent() {
               ) : (
                 <button
                   onClick={handleResendEmail}
-                  className="text-primary-darker hover:text-primary"
+                  className="text-brand-600 hover:text-brand-500"
                 >
                   now
                 </button>
@@ -68,7 +68,7 @@ function VerifyEmailContent() {
           <div className="text-center">
             <button
               onClick={() => router.push('/login')}
-              className="text-sm text-primary-darker hover:text-primary"
+              className="text-sm text-brand-600 hover:text-brand-500"
             >
               ← Back to login
             </button>

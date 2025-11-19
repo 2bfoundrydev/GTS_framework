@@ -18,6 +18,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: `
+          body {
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+          }
+          @media (prefers-color-scheme: dark) {
+            body {
+              background-color: #111827;
+            }
+          }
+        `}} />
+      </head>
       <body className={geist.className}>
         <Analytics mode="auto" />
         {/* <PostHogErrorBoundary>

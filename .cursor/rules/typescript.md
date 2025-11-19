@@ -1,0 +1,137 @@
+# TypeScript Rules
+
+## Strict Mode
+Project uses strict TypeScript. All code must be properly typed.
+
+## Component Props
+
+### ✅ Good - Explicit types:
+```tsx
+interface ButtonProps {
+  onClick: () => void;
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary';
+  disabled?: boolean;
+}
+
+export function Button({ onClick, children, variant = 'primary', disabled }: ButtonProps) {
+  // ...
+}
+```
+
+### ❌ Avoid - any types:
+```tsx
+function Button(props: any) {  // ❌ Don't use 'any'
+  // ...
+}
+```
+
+## Type Definitions
+
+Store types in:
+- `types/` directory for shared types
+- Co-located with components for component-specific types
+
+### Example Types:
+
+```tsx
+// types/stripe.d.ts
+export interface Subscription {
+  id: string;
+  status: 'active' | 'canceled' | 'trialing' | 'past_due';
+  current_period_end: string;
+  cancel_at_period_end: boolean;
+}
+
+// types/user.ts
+export interface UserProfile {
+  id: string;
+  email: string;
+  full_name?: string;
+  avatar_url?: string;
+}
+```
+
+## Async/Await
+
+Always type async functions:
+
+```tsx
+async function fetchUser(userId: string): Promise<User | null> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+      
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return null;
+  }
+}
+```
+
+## Event Handlers
+
+```tsx
+// Mouse events
+const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  // ...
+};
+
+// Form events
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  // ...
+};
+
+// Input events
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ...
+};
+```
+
+## Generics
+
+Use generics for reusable components:
+
+```tsx
+interface DataTableProps<T> {
+  data: T[];
+  renderRow: (item: T) => React.ReactNode;
+}
+
+function DataTable<T>({ data, renderRow }: DataTableProps<T>) {
+  return (
+    <div>
+      {data.map(renderRow)}
+    </div>
+  );
+}
+```
+
+## Never Use
+
+- ❌ `any` - use `unknown` or proper types
+- ❌ `// @ts-ignore` - fix the type issue instead
+- ❌ `as any` - only use type assertions when absolutely necessary
+
+## Type Guards
+
+```tsx
+function isError(error: unknown): error is Error {
+  return error instanceof Error;
+}
+
+try {
+  // ...
+} catch (error) {
+  if (isError(error)) {
+    console.error(error.message);
+  }
+}
+```
+
