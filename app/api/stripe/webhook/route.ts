@@ -3,14 +3,14 @@ import type { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/utils/supabase-admin';
 import { withCors } from '@/utils/cors';
+import { logStripe } from '@/utils/logger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 // Helper function for consistent logging
 function logWebhookEvent(message: string, data?: unknown) {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] WEBHOOK: ${message}`, data ? JSON.stringify(data, null, 2) : '');
+  logStripe.webhook(message, data);
 }
 
 // Define interfaces for stored data

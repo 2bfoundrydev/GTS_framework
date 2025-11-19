@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/utils/supabase-admin';
 import { withCors } from '@/utils/cors';
+import { logStripe } from '@/utils/logger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -31,7 +32,7 @@ export const POST = withCors(async function POST(request: NextRequest) {
 
     return NextResponse.json({ status: 'success', subscription });
   } catch (error) {
-    console.error('Subscription reactivation failed:', error);
+    logStripe.error('reactivation', error);
     return NextResponse.json(
       { error: 'Failed to reactivate subscription' },
       { status: 500 }

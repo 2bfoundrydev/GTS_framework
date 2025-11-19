@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/utils/supabase-admin';
 import { withCors } from '@/utils/cors';
+import { logger } from '@/utils/logger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -15,7 +16,7 @@ export const DELETE = withCors(async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    console.log('Starting account soft-deletion for user:', userId);
+    logger.info({ userId }, 'Starting account soft-deletion');
 
     // 1. Cancel Stripe subscriptions if they exist
     const { data: subscriptionsData, error: subError } = await supabaseAdmin
@@ -24,15 +25,15 @@ export const DELETE = withCors(async function DELETE(request: NextRequest) {
       .eq('user_id', userId);
 
     if (subError) {
-      console.error('Subscription fetch error:', subError);
+      logger.error({ userId, error: subError }, 'Subscription fetch error');
     } else if (subscriptionsData) {
       for (const sub of subscriptionsData) {
         if (sub.stripe_subscription_id && (sub.status === 'active' || sub.status === 'trialing')) {
           try {
             await stripe.subscriptions.cancel(sub.stripe_subscription_id);
-            console.log('Stripe subscription cancelled:', sub.stripe_subscription_id);
+            logger.info({ subscriptionId: sub.stripe_subscription_id }, 'Stripe subscription cancelled');
           } catch (stripeError) {
-            console.error('Stripe cancellation error:', stripeError);
+            logger.error({ subscriptionId: sub.stripe_subscription_id, error: stripeError }, 'Stripe cancellation error');
           }
         }
       }
@@ -48,7 +49,7 @@ export const DELETE = withCors(async function DELETE(request: NextRequest) {
       .eq('id', userId);
 
     if (profileError) {
-      console.error('Profile update error:', profileError);
+      logger.error({ userId, error: profileError }, 'Profile update error');
       return NextResponse.json(
         { error: 'Failed to update profile', details: profileError },
         { status: 500 }
@@ -65,13 +66,13 @@ export const DELETE = withCors(async function DELETE(request: NextRequest) {
       .eq('user_id', userId);
 
     if (subscriptionUpdateError) {
-      console.error('Subscription update error:', subscriptionUpdateError);
+      logger.error({ userId, error: subscriptionUpdateError }, 'Subscription update error');
     }
 
-    console.log('Account soft-deletion completed successfully');
+    logger.info({ userId }, 'Account soft-deletion completed successfully');
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error in account soft-deletion:', error);
+    logger.error({ userId, error }, 'Error in account soft-deletion');
     return NextResponse.json(
       { 
         error: 'Failed to process account deletion', 

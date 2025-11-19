@@ -42,6 +42,7 @@
 
 - All code comments must be in English.
 - All commit messages must be in English, imperative mood (e.g., "Add API handler", "Fix validation logic").
+- **NEVER make git commits without explicit user approval.** Always stage changes and show git status, then wait for user to explicitly say "commit" or "make commit".
 
 # Safety and validation
 

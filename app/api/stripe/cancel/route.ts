@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/utils/supabase-admin';
 import { withCors } from '@/utils/cors';
+import { logStripe } from '@/utils/logger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -43,7 +44,7 @@ export const POST = withCors(async function POST(request: NextRequest) {
         .eq('stripe_subscription_id', subscriptionId);
 
       if (supabaseError) {
-        console.error('Supabase update error:', supabaseError);
+        logStripe.error('supabase_update', supabaseError);
         throw supabaseError;
       }
 
@@ -58,7 +59,7 @@ export const POST = withCors(async function POST(request: NextRequest) {
       { status: 400 }
     );
   } catch (error) {
-    console.error('Subscription cancellation failed:', error);
+    logStripe.error('subscription_cancellation', error);
     return NextResponse.json(
       { 
         error: 'Failed to cancel subscription',
