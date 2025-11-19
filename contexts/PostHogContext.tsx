@@ -6,20 +6,12 @@ import PostHogPageView from '@/components/PostHogPageView'
 import { initPostHog } from '@/utils/posthog'
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  const [isReady, setIsReady] = useState(false)
-  
   const client = useMemo(() => {
     if (typeof window === 'undefined') return null
     return initPostHog()
   }, [])
 
-  useEffect(() => {
-    if (client) {
-      setIsReady(true)
-    }
-  }, [client])
-
-  if (!isReady || !client) return null
+  if (!client) return null
 
   return (
     <PHProvider client={client}>

@@ -17,7 +17,7 @@ function getCorsHeaders(request: NextRequest) {
   };
 }
 
-export function withCors(handler: Function) {
+export function withCors(handler: (request: NextRequest) => Promise<NextResponse>) {
   return async function corsHandler(request: NextRequest) {
     // Handle preflight requests
     if (request.method === 'OPTIONS') {

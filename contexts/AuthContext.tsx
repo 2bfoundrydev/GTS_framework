@@ -5,8 +5,7 @@ import { supabase } from '@/utils/supabase';
 import { 
   Session, 
   User, 
-  SupabaseClient, 
-  AuthTokenResponse 
+  SupabaseClient
 } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -32,12 +31,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-interface SubscriptionPayload {
-  new: {
-    user_id: string;
-    [key: string]: any;
-  };
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -61,15 +54,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // console.log("AuthContext - subscription data: ", data)
-
       const isValid = data && 
         ['active', 'trialing'].includes(data.status) && 
         new Date(data.current_period_end) > new Date();
-      // console.log("AuthContext -  isValid: ", data)
 
       setIsSubscriber(!!isValid);
-      console.log("AuthContext -  set isSubscriber: ", isSubscriber)
     } catch (error) {
       console.error('Subscription check error:', error);
       setIsSubscriber(false);

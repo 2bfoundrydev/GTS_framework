@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ... your existing config ...
-  webpack: (config, { isServer }) => {
-    config.ignoreWarnings = [
-      { module: /node_modules\/punycode/ }
-    ];
+  // Enable Turbopack (required in Next 16 when a webpack config exists)
+  turbopack: {},
+
+  // Existing webpack customization (used only when building with webpack)
+  webpack: (config) => {
+    config.ignoreWarnings = [{ module: /node_modules\/punycode/ }];
     return config;
   },
-}
+};
 
-module.exports = nextConfig 
+module.exports = nextConfig;

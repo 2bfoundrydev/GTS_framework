@@ -125,25 +125,23 @@ export default function Dashboard() {
 
   // Second check - Auth check
   useEffect(() => {
-    if (isAuthLoading || isTrialLoading) return;
+    if (isAuthLoading || isTrialLoading || hasCheckedSubscription) return;
 
     console.log('Access check:', {
       isSubscriber,
-      hasCheckedSubscription,
       isInTrial: isInTrial,
       authLoading: isAuthLoading,
     });
 
-    if (!hasCheckedSubscription) {
-      setHasCheckedSubscription(true);
-      
-      // Allow access for both subscribers and trial users
-      if (!user || (!isSubscriber && !isInTrial && !isAuthLoading)) {
-        console.log('No valid subscription or trial, redirecting');
-        router.replace('/profile');
-      }
+    // Mark as checked first
+    setHasCheckedSubscription(true);
+    
+    // Then check access on next render
+    if (!user || (!isSubscriber && !isInTrial)) {
+      console.log('No valid subscription or trial, redirecting');
+      router.replace('/profile');
     }
-  }, [isSubscriber, isAuthLoading, hasCheckedSubscription, router, user, subscription, isTrialLoading, isInTrial]);
+  }, [isSubscriber, isAuthLoading, hasCheckedSubscription, router, user, isTrialLoading, isInTrial]);
 
   // Add refresh effect
   useEffect(() => {

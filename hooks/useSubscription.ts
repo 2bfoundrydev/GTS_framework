@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import debounce from 'lodash/debounce';
 
@@ -16,14 +16,15 @@ export interface Subscription {
   updated_at: string;
 }
 
+// Cache outside component to persist across renders
+const subscriptionCache = new Map<string, {data: Subscription | null, timestamp: number}>();
+const CACHE_DURATION = 30000; // 30 seconds
+
 export function useSubscription() {
   const { user, supabase } = useAuth();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const subscriptionCache = new Map<string, {data: Subscription | null, timestamp: number}>();
-  const CACHE_DURATION = 30000; // 30 seconds
 
   const fetchSubscription = useCallback(async () => {
     if (!user?.id) {
@@ -89,8 +90,8 @@ export function useSubscription() {
   const MAX_SYNC_RETRIES = 3;
   const [syncRetries, setSyncRetries] = useState(0);
 
-  const debouncedSyncWithStripe = useCallback(
-    debounce(async (subscriptionId: string) => {
+  const debouncedSyncWithStripe = useMemo(
+    () => debounce(async (subscriptionId: string) => {
       if (syncRetries >= MAX_SYNC_RETRIES) {
         console.log('Max sync retries reached');
         return;
