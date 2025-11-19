@@ -48,14 +48,14 @@ export default function LoginPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-foreground">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="text-gray-900 dark:text-white">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex mt-20 justify-center bg-background px-4">
+    <div className="min-h-screen flex mt-20 justify-center bg-gray-50 dark:bg-gray-950 px-4">
       <div className="w-full max-w-md">
         {/* <h1 className="text-4xl font-bold text-center mb-8 text-primary dark:text-white">
           NextTemp

@@ -61,7 +61,7 @@ export function AccountManagement() {
 
         {/* <button
           onClick={() => setIsDeleteModalOpen(true)}
-          className="w-full text-left px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50"
+          className="w-full text-left px-4 py-2 bg-red-100 dark:bg-error-900/30 text-red-600 dark:text-error-400 rounded-lg hover:bg-red-200 dark:hover:bg-error-900/50"
         >
           Delete Account
         </button> */}
@@ -76,7 +76,7 @@ export function AccountManagement() {
               This action cannot be undone. All your data will be permanently deleted.
             </p>
             {error && (
-              <p className="text-red-500 mb-4">{error}</p>
+              <p className="text-error-500 mb-4">{error}</p>
             )}
             <div className="flex justify-end gap-4">
               <button
@@ -88,7 +88,7 @@ export function AccountManagement() {
               <button
                 onClick={handleDeleteAccount}
                 disabled={isLoading}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg disabled:opacity-50"
+                className="px-4 py-2 bg-error-500 text-white rounded-lg disabled:opacity-50"
               >
                 {isLoading ? 'Deleting...' : 'Delete Account'}
               </button>

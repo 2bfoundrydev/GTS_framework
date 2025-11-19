@@ -73,13 +73,13 @@ const workflowSections = [
     id: "overview",
     title: "Overview",
     description: "Everything you need to build modern SaaS applications",
-    bgColor: "bg-white dark:bg-[#0B1120]"
+    bgColor: "bg-white dark:bg-gray-950"
   },
   {
     id: "authentication",
     title: "Authentication",
     description: "Secure user authentication with multiple providers",
-    bgColor: "bg-gray-50 dark:bg-[#0B1120]",
+    bgColor: "bg-gray-50 dark:bg-gray-950",
     metrics: [
       { label: "Auth Providers", value: "5+" },
       { label: "Setup Time", value: "2min" },
@@ -90,7 +90,7 @@ const workflowSections = [
     id: "payments",
     title: "Payments",
     description: "Seamless payment integration with Stripe",
-    bgColor: "bg-white dark:bg-[#0B1120]",
+    bgColor: "bg-white dark:bg-gray-950",
     metrics: [
       { label: "Integration", value: "1-Click" },
       { label: "Providers", value: "Stripe" },
@@ -101,7 +101,7 @@ const workflowSections = [
     id: "database",
     title: "Database",
     description: "Powerful database with Supabase integration",
-    bgColor: "bg-gray-50 dark:bg-[#0B1120]",
+    bgColor: "bg-gray-50 dark:bg-gray-950",
     metrics: [
       { label: "Database", value: "PostgreSQL" },
       { label: "Real-time", value: "Yes" },
@@ -112,7 +112,7 @@ const workflowSections = [
     id: "features",
     title: "Features",
     description: "Additional features to enhance your application",
-    bgColor: "bg-white dark:bg-[#0B1120]",
+    bgColor: "bg-white dark:bg-gray-950",
     metrics: [
       { label: "Dark Mode", value: "Built-in" },
       { label: "Components", value: "50+" },
@@ -123,7 +123,7 @@ const workflowSections = [
     id: "pricing",
     title: "Pricing",
     description: "Simple, transparent pricing for your needs",
-    bgColor: "bg-gray-50 dark:bg-[#0B1120]"
+    bgColor: "bg-gray-50 dark:bg-gray-950"
   }
 ];
 
@@ -168,13 +168,13 @@ const featureCards = [
     title: "Payments",
     description: "Stripe subscription management",
     icon: <CreditCard className="h-6 w-6 text-brand-500" />,
-    bgGradient: "from-green-500/10 to-emerald-500/10"
+    bgGradient: "from-success-500/10 to-success-500/10"
   },
   {
     title: "Dark Mode",
     description: "Built-in theme management",
     icon: <Moon className="h-6 w-6 text-brand-500" />,
-    bgGradient: "from-orange-500/10 to-red-500/10"
+    bgGradient: "from-orange-500/10 to-error-500/10"
   }
 ];
 
@@ -198,7 +198,7 @@ export default function LandingPage() {
   const showDevBanner = process.env.NEXT_PUBLIC_DEV_BANNER === 'true';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] relative">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 relative">
       {showDevBanner && (
         <div className="fixed top-4 left-1/2 -trangray-x-1/2 z-50 px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-semibold shadow-lg">
           DEV ENVIRONMENT
@@ -317,7 +317,7 @@ export default function LandingPage() {
               >
                 <div className="relative rounded-xl overflow-hidden shadow-2xl border border-gray-700/50">
                   {/* Glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 opacity-50 blur-xl" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-500/20 via-transparent to-blue-light-500/20 opacity-50 blur-xl" />
                   
                   {/* Image container with hover effect */}
                   <motion.div
@@ -335,7 +335,7 @@ export default function LandingPage() {
                     />
                     
                     {/* Overlay badge */}
-                    <div className="absolute top-4 right-4 px-3 py-1.5 bg-green-500/90 backdrop-blur-sm text-white text-xs font-semibold rounded-full shadow-lg">
+                    <div className="absolute top-4 right-4 px-3 py-1.5 bg-success-500/90 backdrop-blur-sm text-white text-xs font-semibold rounded-full shadow-lg">
                       ✓ Live Preview
                     </div>
                   </motion.div>

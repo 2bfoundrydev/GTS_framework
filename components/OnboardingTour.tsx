@@ -43,7 +43,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
         description: (
             <div className="flex flex-col gap-2 items-center">
               <p>Click the red button to STOP voice interaction.</p>
-              <button className="w-12 h-12 mt-2 rounded-full flex items-center justify-center bg-red-500 hover:bg-red-600 shadow-lg"><span className="text-xl text-white">⏹</span></button>
+              <button className="w-12 h-12 mt-2 rounded-full flex items-center justify-center bg-error-500 hover:bg-error-600 shadow-lg"><span className="text-xl text-white">⏹</span></button>
             </div>
           ),
           targetClass: "ai-assistant-button"

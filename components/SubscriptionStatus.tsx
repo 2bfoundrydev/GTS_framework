@@ -10,7 +10,7 @@ export function SubscriptionStatus() {
   }
 
   if (error) {
-    return <div className="text-red-500">Error checking subscription: {error}</div>;
+    return <div className="text-error-500">Error checking subscription: {error}</div>;
   }
 
   if (subscription?.status === 'active' || subscription?.status === 'trialing') {

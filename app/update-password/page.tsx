@@ -79,13 +79,13 @@ export default function UpdatePasswordPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 text-red-500 p-4 rounded-lg">
+          <div className="bg-error-50 dark:bg-error-900/30 text-error-500 p-4 rounded-lg">
             {error}
           </div>
         )}
 
         {success ? (
-          <div className="bg-green-50 dark:bg-green-900/30 text-green-500 p-4 rounded-lg">
+          <div className="bg-success-50 dark:bg-success-900/30 text-success-500 p-4 rounded-lg">
             Password updated successfully! Redirecting to login...
           </div>
         ) : (
@@ -127,7 +127,7 @@ export default function UpdatePasswordPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-brand-500-darker hover:bg-blue-700 disabled:opacity-50"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-brand-600 hover:bg-brand-700 disabled:opacity-50"
             >
               {isLoading ? 'Updating...' : 'Update Password'}
             </button>

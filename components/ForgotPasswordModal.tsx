@@ -41,7 +41,7 @@ export function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordModalProp
         
         {success ? (
           <div className="space-y-4">
-            <p className="text-green-600 dark:text-green-400">
+            <p className="text-success-600 dark:text-success-400">
               Reset link has been sent to your email address. Please check your inbox.
             </p>
             <button
@@ -54,7 +54,7 @@ export function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordModalProp
         ) : (
           <div className="space-y-4">
             {error && (
-              <p className="text-red-500 text-sm">{error}</p>
+              <p className="text-error-500 text-sm">{error}</p>
             )}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">

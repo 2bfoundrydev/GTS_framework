@@ -149,15 +149,15 @@ function ProfileContent() {
   return (
     <ErrorBoundary
       fallback={
-        <div className="p-4 text-red-500">
+        <div className="p-4 text-error-500">
           Failed to load subscription details. Please try refreshing.
         </div>
       }
     >
-      <div className="min-h-screen bg-surface-light dark:bg-surface-dark p-8 max-w-4xl mx-auto">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-8 max-w-4xl mx-auto">
         {paymentStatus === 'success' && (
-          <div className="mb-8 p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-            <p className="text-green-600 dark:text-green-400">
+          <div className="mb-8 p-4 bg-success-50 dark:bg-success-900/30 rounded-lg">
+            <p className="text-success-600 dark:text-success-400">
               🎉 Thank you for your subscription! Your payment was successful.
             </p>
           </div>
@@ -171,7 +171,7 @@ function ProfileContent() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Subscription Status</h2>
           {error ? (
-            <div className="text-red-500 dark:text-red-400">{error}</div>
+            <div className="text-error-500 dark:text-error-400">{error}</div>
           ) : isLoadingSubscription ? (
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
@@ -181,7 +181,7 @@ function ProfileContent() {
             <div className="space-y-2">
               <p>
                 <span className="font-medium">Status:</span>{' '}
-                <span className={`${subscription.status === 'active' ? 'text-green-500' : 'text-yellow-500'}`}>
+                <span className={`${subscription.status === 'active' ? 'text-success-500' : 'text-yellow-500'}`}>
                   {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
                 </span>
               </p>
@@ -203,7 +203,7 @@ function ProfileContent() {
                   </p>
                   <button
                     onClick={handleReactivateSubscription}
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+                    className="bg-success-500 hover:bg-success-600 text-white px-4 py-2 rounded-lg"
                   >
                     Resume Subscription
                   </button>
@@ -211,7 +211,7 @@ function ProfileContent() {
               ) : (subscription.status === 'active' || subscription.status === 'trialing') ? (
                 <button
                   onClick={() => setIsCancelModalOpen(true)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg mt-4"
+                  className="bg-error-500 hover:bg-error-600 text-white px-4 py-2 rounded-lg mt-4"
                 >
                   Cancel Subscription
                 </button>
@@ -229,8 +229,8 @@ function ProfileContent() {
                 </>
               ) : trialEndTime ? (
                 <>
-                  <div className="p-4 bg-red-50 dark:bg-red-900/30 rounded-lg mb-4">
-                    <p className="text-red-600 dark:text-red-400">
+                  <div className="p-4 bg-error-50 dark:bg-error-900/30 rounded-lg mb-4">
+                    <p className="text-error-600 dark:text-error-400">
                       Your trial period ended on {new Date(trialEndTime).toLocaleDateString()}.
                     </p>
                     <p className="mt-2">Subscribe now to regain access to the cooking experience.</p>
@@ -271,7 +271,7 @@ function ProfileContent() {
                 </button>
                 <button
                   onClick={handleCancelSubscription}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                  className="bg-error-500 hover:bg-error-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
                   disabled={isCancelling}
                 >
                   {isCancelling ? (

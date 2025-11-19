@@ -39,7 +39,7 @@ export function LoginForm({
       </div>
 
       {error && (
-        <div className="text-red-500 text-center">
+        <div className="text-error-500 text-center">
           {error}
         </div>
       )}
@@ -47,7 +47,7 @@ export function LoginForm({
       <div className="mt-6 space-y-4">
         <button
           onClick={onGoogleSignIn}
-          className="w-full py-2.5 px-4 border border-gray-200 dark:border-gray-700 rounded-full shadow-subtle text-text dark:text-text-dark bg-surface-light dark:bg-surface-dark hover:bg-neutral dark:hover:bg-gray-800 transition-all flex items-center justify-center"
+          className="w-full py-2.5 px-4 border border-gray-200 dark:border-gray-700 rounded-full shadow-subtle text-gray-900 dark:text-white bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center"
         >
           <Image
             src="/Google-Logo.png"

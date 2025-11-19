@@ -209,7 +209,7 @@ export default function Dashboard() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120]">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Dashboard Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -243,7 +243,7 @@ export default function Dashboard() {
                   {metric.icon}
                 </div>
                 <span className={`text-sm font-medium ${
-                  metric.trend === 'up' ? 'text-green-500' : 'text-red-500'
+                  metric.trend === 'up' ? 'text-success-500' : 'text-error-500'
                 }`}>
                   {metric.change}
                 </span>
