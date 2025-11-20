@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
-/* CHANGED: Using system preference instead of .dark class for automatic dark theme
-   Before: @custom-variant dark (&:is(.dark *)); - requires ThemeProvider
-   Now: @custom-variant dark (@media (prefers-color-scheme: dark)); - works automatically */
-@custom-variant dark (@media (prefers-color-scheme: dark));
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-*: initial;

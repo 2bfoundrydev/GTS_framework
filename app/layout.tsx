@@ -23,8 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : ''}>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              document.documentElement.classList.add('dark');
+            }
+          })();
+        `}} />
         <style dangerouslySetInnerHTML={{ __html: `
           body {
             background-color: #ffffff;
