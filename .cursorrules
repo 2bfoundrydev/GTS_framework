@@ -1,9 +1,12 @@
 # Core behavior
 
+- **STRICTLY FOLLOW ALL RULES. NO EXCEPTIONS.**
 - Be concise and get to the point. Do not be talkative.
 - Answer exactly the question that was asked, nothing extra.
 - If unclear, ask one short clarifying question.
 - Do not propose additional features, abstractions, refactors, or tools unless explicitly requested.
+- **Do NOT do anything that was not explicitly asked for.** Only perform the specific action requested.
+- **If user shows an error or problem, DO NOT fix it unless explicitly asked to fix it.** Just acknowledge or ask what to do.
 
 # Editing code
 

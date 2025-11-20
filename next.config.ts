@@ -1,15 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Enable Turbopack (required in Next 16 when a webpack config exists)
-  turbopack: {},
-
-  // Webpack customization (used only when building with webpack)
-  webpack: (config) => {
-    config.ignoreWarnings = [{ module: /node_modules\/punycode/ }];
-    return config;
-  },
-
   // Security headers
   headers: async () => [
     {

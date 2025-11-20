@@ -8,9 +8,11 @@ import { logger } from '@/utils/logger';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const DELETE = withCors(async function DELETE(request: NextRequest) {
+  let userId: string | null = null;
+  
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    userId = searchParams.get('userId');
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
