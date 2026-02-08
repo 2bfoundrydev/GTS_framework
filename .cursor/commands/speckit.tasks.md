@@ -10,7 +10,7 @@ handoffs:
     prompt: Start the implementation in phases
     send: true
 scripts:
-  sh: scripts/bash/check-prerequisites.sh --json
+  sh: .specify/scripts/check-prerequisites.sh --json
 ---
 
 ## User Input

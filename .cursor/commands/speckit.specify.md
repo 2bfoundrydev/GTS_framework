@@ -9,7 +9,7 @@ handoffs:
     prompt: Clarify specification requirements
     send: true
 scripts:
-  sh: scripts/bash/create-new-feature.sh --json "{ARGS}"
+  sh: .specify/scripts/create-new-feature.sh --json "{ARGS}"
 ---
 
 ## User Input

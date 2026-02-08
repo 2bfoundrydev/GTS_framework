@@ -20,6 +20,11 @@ export default function TopBar() {
   // State for tracking logout process
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  // Hide TopBar on preview routes
+  if (pathname.startsWith('/preview/')) {
+    return null;
+  }
+
   // Handle click outside dropdown to close it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

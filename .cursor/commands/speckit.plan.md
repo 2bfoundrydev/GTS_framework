@@ -9,9 +9,9 @@ handoffs:
     agent: speckit.checklist
     prompt: Create a checklist for the following domain...
 scripts:
-  sh: scripts/bash/setup-plan.sh --json
+  sh: .specify/scripts/setup-plan.sh --json
 agent_scripts:
-  sh: scripts/bash/update-agent-context.sh __AGENT__
+  sh: .specify/scripts/update-agent-context.sh __AGENT__
 ---
 
 ## User Input

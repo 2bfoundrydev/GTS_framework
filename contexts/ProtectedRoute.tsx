@@ -15,6 +15,19 @@ const PUBLIC_ROUTES = [
   '/test'
 ];
 
+// Function to check if route is public (including prefix matches)
+function isPublicRoute(pathname: string): boolean {
+  // Exact match
+  if (PUBLIC_ROUTES.includes(pathname)) {
+    return true;
+  }
+  // Prefix match for preview routes
+  if (pathname.startsWith('/preview/')) {
+    return true;
+  }
+  return false;
+}
+
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const pathname = usePathname();
@@ -22,7 +35,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !user && !PUBLIC_ROUTES.includes(pathname)) {
+    if (!isLoading && !user && !isPublicRoute(pathname)) {
       setShouldRedirect(true);
       const redirectUrl = `/login?redirect=${encodeURIComponent(pathname)}`;
       window.location.assign(redirectUrl);
