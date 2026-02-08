@@ -63,3 +63,4 @@ public/        - Static assets
 - **DO NOT** modify `app/globals.css` - it's from reference project (TailAdmin)
 - Always test authentication flows after changes
 - Verify Stripe webhooks in development with Stripe CLI
+- `.env.local` exists in project root but is excluded from AI context via `.cursorignore` for security

@@ -8,7 +8,7 @@
 -- Short text entries owned by user
 
 CREATE TABLE IF NOT EXISTS public.notes (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     
     -- Content
@@ -33,7 +33,7 @@ COMMENT ON COLUMN public.notes.body IS 'Note body content (optional)';
 -- Saved URLs owned by user
 
 CREATE TABLE IF NOT EXISTS public.links (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     
     -- Content
@@ -60,7 +60,7 @@ COMMENT ON COLUMN public.links.description IS 'Link description (optional)';
 -- File metadata records for objects stored in external storage
 
 CREATE TABLE IF NOT EXISTS public.files (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     
     -- File metadata
