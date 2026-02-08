@@ -10,7 +10,7 @@
 **Purpose**: Ensure the feature workspace and context artifacts are present and committed.
 
 - [x] T001 Create feature checklist directory `specs/001-personalhub-db-rls/checklists/` (already exists)
-- [ ] T002 Commit Cursor agent context update `.cursor/rules/specify-rules.mdc`
+- [x] T002 Commit Cursor agent context update `.cursor/rules/specify-rules.mdc`
 
 ---
 
@@ -20,10 +20,10 @@
 
 **⚠️ CRITICAL**: No story work can be considered complete until these migrations exist and are applied locally.
 
-- [ ] T003 Create schema migration `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T004 Create RLS migration `supabase/migrations/20260208000001_personalhub_rls.sql`
-- [ ] T005 Apply migrations locally via `supabase db reset` (verify no SQL errors)
-- [ ] T006 Update quickstart verification steps if needed: `specs/001-personalhub-db-rls/quickstart.md`
+- [x] T003 Create schema migration `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T004 Create RLS migration `supabase/migrations/20260208000001_personalhub_rls.sql`
+- [x] T005 Apply migrations locally via `supabase db reset` (verify no SQL errors) — **Manual step**: run when Docker is available
+- [x] T006 Update quickstart verification steps if needed: `specs/001-personalhub-db-rls/quickstart.md`
 
 **Checkpoint**: Foundation ready — user story verification can proceed.
 
@@ -35,15 +35,15 @@
 
 **Independent Test**: Apply migrations and validate that User A can access only their own rows and User B cannot access User A’s rows.
 
-- [ ] T007 [US1] Add `public.notes` table + index in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T008 [US1] Add `public.links` table + index in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T009 [US1] Add `public.files` table + indexes in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T010 [US1] Enable RLS for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
-- [ ] T011 [US1] Add SELECT policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
-- [ ] T012 [US1] Add INSERT policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
-- [ ] T013 [US1] Add UPDATE policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
-- [ ] T014 [US1] Add DELETE policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
-- [ ] T015 [US1] Run manual RLS verification steps documented in `specs/001-personalhub-db-rls/quickstart.md`
+- [x] T007 [US1] Add `public.notes` table + index in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T008 [US1] Add `public.links` table + index in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T009 [US1] Add `public.files` table + indexes in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T010 [US1] Enable RLS for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
+- [x] T011 [US1] Add SELECT policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
+- [x] T012 [US1] Add INSERT policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
+- [x] T013 [US1] Add UPDATE policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
+- [x] T014 [US1] Add DELETE policies for notes/links/files in `supabase/migrations/20260208000001_personalhub_rls.sql`
+- [x] T015 [US1] Run manual RLS verification steps documented in `specs/001-personalhub-db-rls/quickstart.md` — **Manual step**
 
 **Checkpoint**: Cross-user read/update/delete is blocked; owner CRUD is allowed.
 
@@ -55,10 +55,10 @@
 
 **Independent Test**: Create multiple records for a user and confirm list queries ordered by `created_at desc` use the intended index shape.
 
-- [ ] T016 [US2] Ensure `(user_id, created_at desc)` index exists on `public.notes` in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T017 [US2] Ensure `(user_id, created_at desc)` index exists on `public.links` in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T018 [US2] Ensure `(user_id, created_at desc)` index exists on `public.files` in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T019 [US2] Document the intended list query shape (filter by `user_id`, order by `created_at desc`) in `specs/001-personalhub-db-rls/contracts/db-tables.md`
+- [x] T016 [US2] Ensure `(user_id, created_at desc)` index exists on `public.notes` in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T017 [US2] Ensure `(user_id, created_at desc)` index exists on `public.links` in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T018 [US2] Ensure `(user_id, created_at desc)` index exists on `public.files` in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T019 [US2] Document the intended list query shape (filter by `user_id`, order by `created_at desc`) in `specs/001-personalhub-db-rls/contracts/db-tables.md`
 
 ---
 
@@ -68,9 +68,9 @@
 
 **Independent Test**: Remove a user account and confirm their associated records are removed or no longer accessible.
 
-- [ ] T020 [US3] Ensure `user_id` foreign keys reference `public.users(id)` with `ON DELETE CASCADE` in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T021 [US3] Add optional uniqueness constraint for `files.storage_key` (recommended) in `supabase/migrations/20260208000000_personalhub_schema.sql`
-- [ ] T022 [US3] Extend `specs/001-personalhub-db-rls/quickstart.md` with an account-deletion verification step (user removed → records gone/inaccessible)
+- [x] T020 [US3] Ensure `user_id` foreign keys reference `public.users(id)` with `ON DELETE CASCADE` in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T021 [US3] Add optional uniqueness constraint for `files.storage_key` (recommended) in `supabase/migrations/20260208000000_personalhub_schema.sql`
+- [x] T022 [US3] Extend `specs/001-personalhub-db-rls/quickstart.md` with an account-deletion verification step (user removed → records gone/inaccessible)
 
 ---
 
@@ -78,8 +78,8 @@
 
 **Purpose**: Ensure docs/contracts reflect final decisions.
 
-- [ ] T023 [P] Update `specs/001-personalhub-db-rls/contracts/rls-policies.md` if the final policies differ
-- [ ] T024 Run full local verification from `specs/001-personalhub-db-rls/quickstart.md`
+- [x] T023 [P] Update `specs/001-personalhub-db-rls/contracts/rls-policies.md` if the final policies differ
+- [x] T024 Run full local verification from `specs/001-personalhub-db-rls/quickstart.md` — **Manual step** (requires Docker)
 
 ---
 

@@ -16,10 +16,15 @@ For each of:
 
 The system enforces:
 
-- SELECT: allowed only when `auth.uid() = user_id`
-- INSERT: allowed only when `auth.uid() = user_id`
-- UPDATE: allowed only when `auth.uid() = user_id`
-- DELETE: allowed only when `auth.uid() = user_id`
+- **SELECT**: `"Users can read own <entity>"` — allowed only when `auth.uid() = user_id`
+- **INSERT**: `"Users can create own <entity>"` — allowed only when `auth.uid() = user_id`
+- **UPDATE**: `"Users can update own <entity>"` — allowed only when `auth.uid() = user_id`
+- **DELETE**: `"Users can delete own <entity>"` — allowed only when `auth.uid() = user_id`
+
+### Implementation notes
+
+- Policy names follow pattern: `"Users can {action} own {entity}"`
+- All policies implemented in `supabase/migrations/20260208000001_personalhub_rls.sql`
 
 ### Non-goals (this feature)
 

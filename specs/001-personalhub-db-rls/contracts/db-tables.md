@@ -12,7 +12,8 @@ This contract describes the database tables added/required by this feature.
   - `body` (text, optional)
   - `created_at` (timestamptz, required, default now)
 - Indexes:
-  - `(user_id, created_at desc)`
+  - `idx_notes_user_created` on `(user_id, created_at desc)` — supports newest-first list queries
+- **Query shape**: `WHERE user_id = <user> ORDER BY created_at DESC`
 
 ### `public.links`
 
@@ -25,7 +26,8 @@ This contract describes the database tables added/required by this feature.
   - `description` (text, optional)
   - `created_at` (timestamptz, required, default now)
 - Indexes:
-  - `(user_id, created_at desc)`
+  - `idx_links_user_created` on `(user_id, created_at desc)` — supports newest-first list queries
+- **Query shape**: `WHERE user_id = <user> ORDER BY created_at DESC`
 
 ### `public.files`
 
@@ -40,6 +42,7 @@ This contract describes the database tables added/required by this feature.
   - `storage_key` (text, required)
   - `created_at` (timestamptz, required, default now)
 - Indexes:
-  - `(user_id, created_at desc)`
-  - Optional: `storage_key` unique (recommended)
+  - `idx_files_user_created` on `(user_id, created_at desc)` — supports newest-first list queries
+  - `idx_files_storage_key` unique on `storage_key` (recommended)
+- **Query shape**: `WHERE user_id = <user> ORDER BY created_at DESC`
 
