@@ -1,3 +1,8 @@
+---
+description: "Supabase client usage, auth patterns, and database query conventions"
+alwaysApply: false
+---
+
 # Supabase Rules
 
 ## Client vs Server
@@ -42,7 +47,7 @@ const supabase = createAdminClient();
 - Bypassing RLS (Row Level Security)
 - Admin operations
 - API routes that need elevated permissions
-- **⚠️ Use with caution - has full database access**
+- Use with caution - has full database access
 
 ## Authentication
 
@@ -99,4 +104,3 @@ try {
 3. **Leverage RLS** - don't bypass unless necessary
 4. **Use `.single()` for one result** - returns object instead of array
 5. **Use `.maybeSingle()`** - when result might not exist (no error if not found)
-

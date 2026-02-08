@@ -64,7 +64,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Subscription check error:', error);
       setIsSubscriber(false);
     }
-  }, [supabase]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - supabase is stable from useMemo
 
   useEffect(() => {
     let mounted = true;
@@ -74,16 +75,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
 
       try {
-        // First, get initial session
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
+        // Add timeout to getSession to prevent infinite hang
+        const sessionPromise = supabase.auth.getSession().catch((err) => {
+          // Silently catch network errors from getSession to prevent console spam
+          return { data: { session: null }, error: { message: err.message || 'Network error' } };
+        });
+        
+        const timeoutPromise = new Promise<{ data: { session: null }, error: { message: string } }>((resolve) => 
+          setTimeout(() => resolve({ data: { session: null }, error: { message: 'getSession timeout' } }), 5000)
+        );
+        
+        const result = await Promise.race([sessionPromise, timeoutPromise]);
+        const session = result.data.session;
+        const error = result.error;
 
         if (!mounted) return;
 
         if (error) {
-          console.error('Auth initialization error (getSession):', error);
+          // Silently handle getSession errors - graceful degradation
+          if (error.message !== 'getSession timeout' && error.message !== 'Network error') {
+            console.error('Auth initialization error (getSession):', error);
+          }
+          // Continue with no session
+          setSession(null);
+          setUser(null);
         } else {
           // Update initial state
           setSession(session);
@@ -120,6 +135,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         if (mounted) {
           console.error('Auth initialization error:', error);
+          // Ensure we have a clean state on error
+          setSession(null);
+          setUser(null);
         }
       } finally {
         if (mounted) {
@@ -136,7 +154,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         unsubscribe();
       }
     };
-  }, [checkSubscription, supabase]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount - checkSubscription and supabase are stable
 
   const value = {
     user,

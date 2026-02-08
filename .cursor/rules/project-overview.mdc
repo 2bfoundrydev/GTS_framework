@@ -1,0 +1,65 @@
+---
+alwaysApply: true
+---
+
+# GTS Framework - Go and Try Your Ideas
+
+## Project Overview
+This is a Next.js 15 SaaS starter template for rapid idea validation.
+
+**Stack:**
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- Supabase (Auth + Database)
+- Stripe (Payments)
+- Tailwind CSS v4
+- PostHog (Analytics)
+
+## Core Principles
+
+### 1. Architecture
+- Use App Router (`app/` directory)
+- Client components: `'use client'` directive required
+- Server components by default
+- API routes in `app/api/`
+
+### 2. Authentication
+- Supabase Auth for user management
+- Protected routes via `ProtectedRoute` wrapper
+- Public routes: `/`, `/login`, `/signup`, `/verify-email`, `/reset-password`, `/update-password`
+
+### 3. Code Style
+- Always use TypeScript
+- Use functional components with hooks
+- Keep components focused and small
+- Prefer composition over prop drilling
+- Use descriptive variable names
+
+### 4. Error Handling
+- Always handle errors gracefully
+- Show user-friendly error messages
+- Log errors to console in development
+- Never expose sensitive data in errors
+
+### 5. Performance
+- Optimize images with Next.js Image
+- Use dynamic imports for heavy components
+- Minimize client-side JavaScript
+- Cache API responses when appropriate
+
+## File Organization
+```
+app/           - Pages and API routes
+components/    - Reusable React components
+contexts/      - React Context providers
+hooks/         - Custom React hooks
+utils/         - Utility functions
+types/         - TypeScript types
+public/        - Static assets
+```
+
+## Important Notes
+- **DO NOT** modify `app/globals.css` - it's from reference project (TailAdmin)
+- Always test authentication flows after changes
+- Verify Stripe webhooks in development with Stripe CLI

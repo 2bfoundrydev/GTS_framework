@@ -1,0 +1,71 @@
+---
+description: ""
+alwaysApply: false
+---
+
+# TailAdmin Integration Rules
+
+## Context
+- We have a TailAdmin PRO license
+- TailAdmin is our UI component library
+- Components are copied on-demand (not all at once)
+
+## Approach: Copy-on-Demand
+
+**Key principles:**
+- Copy components preserving the original folder structure
+- Do NOT adapt, simplify, or change imports
+- Always check if a file already exists before copying
+- Recursively resolve all import dependencies
+
+## Folder Structure
+
+```
+components/
+  ui/               # UI components from TailAdmin
+    dropdown/
+    modal/
+    tabs/
+  [feature]/        # Feature components (kanban, etc)
+icons/              # Icons from TailAdmin
+hooks/              # Hooks from TailAdmin
+utils/              # Utilities from TailAdmin
+types/              # Types from TailAdmin
+```
+
+## Import Convention
+
+Use **original** TailAdmin imports:
+```tsx
+// Correct (as in TailAdmin)
+import { Dropdown } from "@/components/ui/dropdown/Dropdown";
+import { HorizontalDots } from "@/icons";
+
+// Wrong (adapted)
+import Dropdown from '@/components/ui/Dropdown';
+```
+
+## SVG Icons
+
+TailAdmin uses @svgr/webpack. Already configured in `next.config.ts`.
+Copy SVG files to `/icons/` and export via `icons/index.tsx`.
+
+## Forbidden Actions
+
+- Adapt imports to custom structure
+- Simplify components ("remove extras")
+- Replace dependencies with custom alternatives
+- Copy entire `/components/ui/` at once
+- Create barrel exports (`index.ts` with `export *`)
+- Duplicate already existing files
+
+## Allowed Changes (after copy + build verification)
+
+- Fix TypeScript errors (if incompatible with Next.js 15)
+- Add `useEffect` for refs (Next.js 15 ESLint rule)
+- Update image paths (if needed)
+
+## Updates
+
+TailAdmin is a static component source. We do not update it.
+If a new component from a newer version is needed, copy it as new.

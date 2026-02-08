@@ -1,10 +1,15 @@
+---
+globs: "*.tsx, *.css"
+alwaysApply: false
+---
+
 # Tailwind CSS v4 Rules
 
-## ⚠️ Critical: Only Use Defined Colors from @theme
+## Critical: Only Use Defined Colors from @theme
 
 The project uses **Tailwind v4** with custom colors defined in `app/globals.css`.
 
-### ✅ ALLOWED Colors (defined in @theme)
+### ALLOWED Colors (defined in @theme)
 
 **Brand Colors (Primary):**
 - `brand-25` through `brand-950`
@@ -27,35 +32,35 @@ The project uses **Tailwind v4** with custom colors defined in `app/globals.css`
 - `white`, `black`, `current`, `transparent`
 - `theme-pink-500`, `theme-purple-500`
 
-### ❌ NEVER Use These (not defined):
+### NEVER Use These (not defined):
 
 **DO NOT USE:**
-- ❌ `primary`, `primary-dark`, `primary-light`, `primary-darker`
-- ❌ `slate-*` (use `gray-*` instead)
-- ❌ `accent`, `accent-*`
-- ❌ Any default Tailwind colors not in @theme
+- `primary`, `primary-dark`, `primary-light`, `primary-darker`
+- `slate-*` (use `gray-*` instead)
+- `accent`, `accent-*`
+- Any default Tailwind colors not in @theme
 
 **Instead use:**
-- ✅ `bg-brand-500` instead of `bg-primary`
-- ✅ `bg-brand-600` instead of `bg-primary-dark`
-- ✅ `text-brand-500` instead of `text-primary`
-- ✅ `bg-gray-800` instead of `bg-slate-800`
-- ✅ `text-gray-900` instead of `text-slate-900`
+- `bg-brand-500` instead of `bg-primary`
+- `bg-brand-600` instead of `bg-primary-dark`
+- `text-brand-500` instead of `text-primary`
+- `bg-gray-800` instead of `bg-slate-800`
+- `text-gray-900` instead of `text-slate-900`
 
 ## Opacity Syntax (v4 New Style)
 
-### ✅ Correct (Tailwind v4):
+### Correct (Tailwind v4):
 ```tsx
 className="bg-brand-500/50"        // 50% opacity
 className="text-gray-900/80"       // 80% opacity
 className="ring-brand-500/30"      // 30% opacity
 ```
 
-### ❌ Incorrect (Tailwind v3 - deprecated):
+### Incorrect (Tailwind v3 - deprecated):
 ```tsx
-className="bg-brand-500 bg-opacity-50"   // ❌ Old syntax
-className="text-opacity-80"              // ❌ Don't use
-className="ring-opacity-30"              // ❌ Don't use
+className="bg-brand-500 bg-opacity-50"   // Old syntax
+className="text-opacity-80"              // Don't use
+className="ring-opacity-30"              // Don't use
 ```
 
 ## Custom Shadows (defined in @theme)
@@ -95,14 +100,14 @@ Available custom utilities:
 
 ## Examples
 
-### ✅ Good Button:
+### Good Button:
 ```tsx
 <button className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg shadow-subtle hover:shadow-hover">
   Click me
 </button>
 ```
 
-### ✅ Good Card:
+### Good Card:
 ```tsx
 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
   <h3 className="text-gray-900 dark:text-white">Title</h3>
@@ -110,10 +115,9 @@ Available custom utilities:
 </div>
 ```
 
-### ❌ Bad (using undefined colors):
+### Bad (using undefined colors):
 ```tsx
-<button className="bg-primary hover:bg-primary-dark">     ❌
-<div className="bg-slate-800 text-slate-200">            ❌
-<span className="text-accent">                           ❌
+<button className="bg-primary hover:bg-primary-dark">     // wrong
+<div className="bg-slate-800 text-slate-200">            // wrong
+<span className="text-accent">                           // wrong
 ```
-

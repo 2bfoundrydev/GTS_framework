@@ -1,3 +1,8 @@
+---
+globs: "*.ts, *.tsx"
+alwaysApply: false
+---
+
 # TypeScript Rules
 
 ## Strict Mode
@@ -5,7 +10,7 @@ Project uses strict TypeScript. All code must be properly typed.
 
 ## Component Props
 
-### ✅ Good - Explicit types:
+### Good - Explicit types:
 ```tsx
 interface ButtonProps {
   onClick: () => void;
@@ -19,9 +24,9 @@ export function Button({ onClick, children, variant = 'primary', disabled }: But
 }
 ```
 
-### ❌ Avoid - any types:
+### Avoid - any types:
 ```tsx
-function Button(props: any) {  // ❌ Don't use 'any'
+function Button(props: any) {  // Don't use 'any'
   // ...
 }
 ```
@@ -115,9 +120,9 @@ function DataTable<T>({ data, renderRow }: DataTableProps<T>) {
 
 ## Never Use
 
-- ❌ `any` - use `unknown` or proper types
-- ❌ `// @ts-ignore` - fix the type issue instead
-- ❌ `as any` - only use type assertions when absolutely necessary
+- `any` - use `unknown` or proper types
+- `// @ts-ignore` - fix the type issue instead
+- `as any` - only use type assertions when absolutely necessary
 
 ## Type Guards
 
@@ -134,4 +139,3 @@ try {
   }
 }
 ```
-

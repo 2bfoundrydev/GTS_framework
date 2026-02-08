@@ -1,3 +1,8 @@
+---
+globs: "*.tsx"
+alwaysApply: false
+---
+
 # React Rules
 
 ## Component Structure
@@ -212,4 +217,3 @@ const shouldShowBanner = user && !user.hasSeenBanner && isPromoActive;
 4. **Use fragments** instead of unnecessary divs
 5. **Name event handlers** with `handle` prefix: `handleClick`, `handleSubmit`
 6. **Co-locate related code** - keep component, styles, and tests together
-

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "npx eslint --fix ${file}",
+        "description": "Run ESLint with auto-fix on edited file"
+      }
+    ],
+    "stop": [
+      {
+        "command": "node .cursor/hooks/tdd-grind.mjs",
+        "description": "Re-run agent if tests are still failing (TDD grind loop)"
+      }
+    ]
+  }
+}
