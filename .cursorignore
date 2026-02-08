@@ -1,6 +1,5 @@
 # Secrets
-.env
-.env.*
+.env.local
 
 # Build output
 .next/
