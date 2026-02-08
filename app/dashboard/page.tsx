@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { FEATURES } from '@/utils/features';
 
 
 import { useRouter } from 'next/navigation';
@@ -103,6 +104,11 @@ export default function Dashboard() {
 
   // First check - Subscription and trial check
   useEffect(() => {
+    // Skip subscription/trial checks if billing and trials are disabled
+    if (!FEATURES.BILLING && !FEATURES.TRIALS) {
+      return;
+    }
+
     if (isSubLoading || isTrialLoading) return;
     
     const hasValidSubscription = ['active', 'trialing'].includes(subscription?.status || '');
@@ -115,14 +121,23 @@ export default function Dashboard() {
     });
 
     // Only redirect if there's no valid subscription AND no valid trial
-    if (!hasValidSubscription && !isInTrial) {
-      console.log('No valid subscription or trial, redirecting');
-      router.replace('/profile');
+    // And only if billing or trials are enabled
+    if (FEATURES.BILLING || FEATURES.TRIALS) {
+      if (!hasValidSubscription && !isInTrial) {
+        console.log('No valid subscription or trial, redirecting');
+        router.replace('/profile');
+      }
     }
   }, [subscription, isSubLoading, isTrialLoading, router, isInTrial]);
 
   // Second check - Auth check
   useEffect(() => {
+    // Skip if billing and trials are disabled
+    if (!FEATURES.BILLING && !FEATURES.TRIALS) {
+      setHasCheckedSubscription(true);
+      return;
+    }
+
     if (isAuthLoading || isTrialLoading || hasCheckedSubscription) return;
 
     console.log('Access check:', {
@@ -135,7 +150,9 @@ export default function Dashboard() {
     setHasCheckedSubscription(true);
     
     // Then check access on next render
-    if (!user || (!isSubscriber && !isInTrial)) {
+    // Only require subscription/trial if those features are enabled
+    const requiresAccess = FEATURES.BILLING || FEATURES.TRIALS;
+    if (requiresAccess && !user || (!isSubscriber && !isInTrial)) {
       console.log('No valid subscription or trial, redirecting');
       router.replace('/profile');
     }
@@ -154,6 +171,12 @@ export default function Dashboard() {
   }, [user?.id, fetchSubscription]);
 
   useEffect(() => {
+    // Skip onboarding check if feature is disabled
+    if (!FEATURES.ONBOARDING) {
+      setHasCompletedOnboarding(true);
+      return;
+    }
+
     if (user?.id) {
       // Check if user has completed onboarding
       const checkOnboarding = async () => {

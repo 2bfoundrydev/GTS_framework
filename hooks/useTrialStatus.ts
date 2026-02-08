@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { createClient } from '@/utils/supabase/client';
+import { FEATURES } from '@/utils/features';
 
 export function useTrialStatus() {
   const { user } = useAuth();
@@ -12,6 +13,16 @@ export function useTrialStatus() {
 
   useEffect(() => {
     async function checkTrialStatus() {
+      // If trials are disabled, return not in trial
+      if (!FEATURES.TRIALS) {
+        setTrialStatus({
+          isInTrial: false,
+          trialEndTime: null
+        });
+        setIsLoading(false);
+        return;
+      }
+
       if (!user?.id) {
         setIsLoading(false);
         return;

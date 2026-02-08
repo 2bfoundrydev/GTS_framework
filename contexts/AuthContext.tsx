@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import { FEATURES } from '@/utils/features';
 import { 
   Session, 
   User, 
@@ -40,6 +41,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isSubscriber, setIsSubscriber] = useState(false);
 
   const checkSubscription = useCallback(async (userId: string) => {
+    // If billing is disabled, always set subscriber to false
+    if (!FEATURES.BILLING) {
+      setIsSubscriber(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('subscriptions')

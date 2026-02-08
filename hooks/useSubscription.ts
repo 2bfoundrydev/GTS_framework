@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { FEATURES } from '@/utils/features';
 import debounce from 'lodash/debounce';
 
 export interface Subscription {
@@ -27,6 +28,13 @@ export function useSubscription() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchSubscription = useCallback(async () => {
+    // If billing is disabled, return null immediately
+    if (!FEATURES.BILLING) {
+      setSubscription(null);
+      setLoading(false);
+      return;
+    }
+
     if (!user?.id) {
       setSubscription(null);
       setLoading(false);

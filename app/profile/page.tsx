@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
+import { FEATURES } from '@/utils/features';
 import Link from 'next/link';
 import { AccountManagement } from '@/components/AccountManagement';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -167,7 +168,8 @@ function ProfileContent() {
         
         <AccountManagement />
 
-        {/* Subscription Section */}
+        {/* Subscription Section - only show if billing is enabled */}
+        {FEATURES.BILLING && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Subscription Status</h2>
           {error ? (
@@ -247,6 +249,7 @@ function ProfileContent() {
             </div>
           )}
         </div>
+        )}
 
         {/* Show pricing section if user doesn't have an active subscription */}
         {/* {(!subscription || subscription.status === 'canceled') && (
