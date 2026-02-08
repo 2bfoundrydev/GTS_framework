@@ -28,7 +28,7 @@ export function VideoModal({ isOpen, onClose, videoId }: VideoModalProps) {
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="relative bg-white dark:bg-slate-900 rounded-xl shadow-xl max-w-4xl w-full">
+            <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl max-w-4xl w-full">
               {/* Close button */}
               <button
                 onClick={onClose}

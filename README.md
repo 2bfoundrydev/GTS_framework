@@ -1,402 +1,243 @@
-# Next.js + Stripe + Supabase Production-Ready Template
+# GTS Framework - Go and Try Your SaaS Ideas
 
-A production-ready Next.js template featuring authentication, dark mode support, Stripe integration, and a clean, modern UI. Built with TypeScript and Tailwind CSS.
+**Темплейт для быстрого создания SaaS MVP с AI-first подходом.**
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-14-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Tailwind](https://img.shields.io/badge/Tailwind-3.0-38B2AC)
-
-📹 Full YouTube Guide: [Youtube link](https://www.youtube.com/watch?v=ad1BxZufer8&list=PLE9hy4A7ZTmpGq7GHf5tgGFWh2277AeDR&index=8)
-
-🚀 X Post: [X link](https://x.com/ShenSeanChen/status/1895163913161109792)
-
-💡 Try the App: [App link](https://mvp.seanchen.io)
-
-☕️ Buy me a coffee: [Cafe Latte](https://buy.stripe.com/5kA176bA895ggog4gh)
-
-🤖️ Discord: [Invite link](https://discord.com/invite/TKKPzZheua)
-
-## ✨ Features
-
-- 🔐 Authentication with Supabase
-- 💳 Stripe payment integration
-- 🌓 Dark mode support
-- 📱 Responsive design
-- 🎨 Tailwind CSS styling
-- 🔄 Framer Motion animations
-- 🛡️ TypeScript support
-- 📊 Error boundary implementation
-- 🔍 SEO optimized
-- 🤖 MCP integration for AI-powered development
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- A Supabase account
-- A Stripe account
-- A Google Cloud Platform account
-
-### Installation and Setup
-
-1. Clone the template:
-
-```bash
-git clone https://github.com/ShenSeanChen/launch-stripe-nextjs-supabase my-full-stack-app
-cd my-full-stack-app
-rm -rf .git
-git init
-git add .
-git commit -m "Initial commit"
-# git remote add origin https://github.com/ShenSeanChen/my-full-stack-app.git
-git remote add origin https://github.com/USE_YOUR_OWN_GITHUB_NAME/my-full-stack-app.git
-git push -u origin main
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-or
-```bash
-yarn install
-```
-
-3. Create .env.local with all variables from .env.example
-```
-NEXT_PUBLIC_APP_URL=http://localhost:8000
-NEXT_PUBLIC_API_URL=http://localhost:8080
-NEXT_PUBLIC_WS_URL=ws://localhost:8080
-
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-
-# OpenAI Configuration (you'll need to add your key)
-OPENAI_API_KEY=
-
-# Stripe Configuration
-# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_
-NEXT_PUBLIC_STRIPE_BUTTON_ID=buy_btn_
-# STRIPE_SECRET_KEY=sk_test_
-STRIPE_SECRET_KEY=sk_live_
-# STRIPE_WEBHOOK_SECRET=whsec_
-STRIPE_WEBHOOK_SECRET=whsec_
-
-# ANALYTICS
-NEXT_PUBLIC_POSTHOG_KEY=
-NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
-```
-
-4. Set up Google Cloud Platform (GCP):
-   - Create new OAuth 2.0 credentials in GCP Console
-   - Configure authorized JavaScript origins
-   - Configure redirect URIs
-   - Save the Client ID and Client Secret
-
-5. Configure Supabase:
-
-   a. Get API Keys (Project Settings > API):
-      - Project URL → NEXT_PUBLIC_SUPABASE_URL
-      - Anon Public Key → NEXT_PUBLIC_SUPABASE_ANON_KEY
-      - Service Role Secret → SUPABASE_SERVICE_ROLE_KEY
-   
-   b. Set up Authentication:
-      - Go to Authentication > Providers > Google
-      - Add your GCP Client ID and Client Secret
-      - Update Site URL and Redirect URLs
-   
-   c. Database Setup:
-      - Enable Row Level Security (RLS) for all tables
-      - Create policies for authenticated users and service roles
-      - Create the following trigger function:
-
-      ```sql
-      CREATE OR REPLACE FUNCTION public.handle_new_user()
-      RETURNS trigger AS $$
-      BEGIN
-        INSERT INTO public.users (id, email, created_at, updated_at, is_deleted)
-        VALUES (NEW.id, NEW.email, NOW(), NOW(), FALSE);
-        
-        INSERT INTO public.user_preferences (user_id, has_completed_onboarding)
-        VALUES (NEW.id, FALSE);
-        
-        INSERT INTO public.user_trials (user_id, trial_start_time, trial_end_time)
-        VALUES (NEW.id, NOW(), NOW() + INTERVAL '48 hours');
-        
-        RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-      CREATE TRIGGER on_auth_user_created
-        AFTER INSERT ON auth.users
-        FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-      ```
-
-6. Set up Stripe:
-   
-   a. Create a live account and configure:
-      - Create product in Product Catalog
-      - Create promotional coupon codes
-      - Set up Payment Link with trial period
-   
-   b. Get required keys:
-      - Publishable Key → NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-      - Secret Key → STRIPE_SECRET_KEY
-      - Buy Button ID → NEXT_PUBLIC_STRIPE_BUTTON_ID
-   
-   c. Configure webhooks:
-      - Add endpoint: your_url/api/stripe/webhook
-      - Subscribe to events: customer.subscription.*, checkout.session.*, invoice.*, payment_intent.*
-      - Copy Signing Secret → STRIPE_WEBHOOK_SECRET
-
-8. Start the development server:
-```bash
-npm run dev
-```
-or
-```bash
-yarn dev
-```
-
-8. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## 🛠️ MCP Integration Setup
-
-### What is MCP?
-
-MCP (Model Control Protocol) enables enhanced AI assistant capabilities for this project, allowing the AI to interact directly with your Stripe and Supabase accounts to help with debugging, configuring, and managing your application.
-
-For a comprehensive demonstration of MCP capabilities, check out our dedicated demo repository:
-- 🔗 [launch-mcp-demo](https://github.com/ShenSeanChen/launch-mcp-demo) - Collection of powerful MCP tools
-- 📹 [Full YouTube Guide](https://www.youtube.com/watch?v=sfCBCyNyw7U&list=PLE9hy4A7ZTmpGq7GHf5tgGFWh2277AeDR&index=10)
-- 🚀 [X Post](https://x.com/ShenSeanChen/status/1910057838032097688)
-
-### Setting up MCP
-
-1. Create an `mcp.json` file:
-   
-   Copy the example file to create your own configuration:
-   
-   ```bash
-   cp .cursor/mcp.json.example .cursor/mcp.json
-   ```
-
-2. Configure your credentials:
-
-   a. Stripe Integration:
-      - Get your Stripe API key from the Stripe Dashboard
-      - Replace `your_stripe_test_key_here` with your actual test key
-
-   b. Supabase Integration:
-      - Generate a Supabase access token from your Supabase dashboard (Project Settings > API)
-      - Replace `your_supabase_access_token_here` with your actual token
-
-   c. GitHub Integration (optional):
-      - Create a GitHub Personal Access Token with appropriate permissions
-      - Replace `your_github_personal_access_token_here` with your actual token
-
-3. Example of a completed `mcp.json` file:
-
-   ```json
-   {
-     "mcpServers": {
-       "stripe": {
-         "command": "npx",
-         "args": [
-           "-y", 
-           "@stripe/mcp"
-         ],
-         "env": {
-           "STRIPE_SECRET_KEY": "sk_test_51ABC123..."
-         }
-       },
-       "supabase": {
-         "command": "npx",
-         "args": [
-           "-y",
-           "@supabase/mcp-server-supabase@latest",
-           "--access-token",
-           "sbp_1234abcd5678efgh..."
-         ]
-       }
-     }
-   }
-   ```
-
-4. Using MCP with AI assistants:
-   
-   After configuring `mcp.json`, the AI assistant within the Cursor editor will be able to:
-   - Query and manage your Stripe subscriptions
-   - Interact with your Supabase database
-   - Help troubleshoot integration issues
-   - Provide contextual help based on your actual configuration
-
-5. Security Considerations:
-   
-   - Never commit your `mcp.json` file to version control
-   - Use test credentials during development
-   - Limit access tokens to only the permissions needed
-
-### Extending MCP with Additional Tools
-
-The MCP framework can be extended with various tools beyond Stripe and Supabase. Our [launch-mcp-demo](https://github.com/ShenSeanChen/launch-mcp-demo) repository demonstrates how to integrate basic MCP examples.
-
-To integrate these additional tools with your project:
-
-1. Clone the demo repository:
-   ```bash
-   git clone https://github.com/ShenSeanChen/launch-mcp-demo.git
-   ```
-
-2. Follow the installation instructions in the repository's README
-
-3. Update your `.cursor/mcp.json` to include the additional tools:
-   ```json
-   {
-     "mcpServers": {
-       "stripe": {
-         // Your existing Stripe configuration
-       },
-       "supabase": {
-         // Your existing Supabase configuration
-       },
-       "weather": {
-         "command": "/path/to/your/python/environment",
-         "args": [
-           "--directory",
-           "/path/to/launch-mcp-demo/weather",
-           "run",
-           "weather.py"
-         ]
-       },
-       "files": {
-         "command": "/path/to/your/python/environment",
-         "args": [
-           "--directory",
-           "/path/to/launch-mcp-demo/files",
-           "run",
-           "files.py"
-         ]
-       }
-     }
-   }
-   ```
-
-4. Restart your Cursor editor to apply the changes
-
-These additional tools can help enhance your development workflow and provide more capabilities to the AI assistant when working with your project.
-
-## 📖 Project Structure
-
-```
-├── app/                  # Next.js 14 app directory
-│   ├── api/              # API routes
-│   │   ├── stripe/       # Stripe payment endpoints
-│   │   └── user/         # User API endpoints
-│   ├── auth/             # Auth-related pages
-│   │   ├── callback/     # handle auth callback
-│   ├── dashboard/        # Dashboard pages
-│   ├── pay/              # Payment pages
-│   ├── profile/          # User profile pages
-│   ├── reset-password/   # Reset password pages
-│   ├── update-password/  # Update password pages
-│   ├── verify-email/     # Verify email pages
-│   ├── layout.tsx        # Root layout
-│   └── page.tsx          # Home page
-├── components/           # Reusable components
-├── contexts/             # React contexts
-├── hooks/                # Custom React hooks
-├── utils/                # Utility functions
-├── types/                # TypeScript type definitions
-├── public/               # Static assets
-├── styles/               # Global styles
-└── .cursor/              # Cursor editor and MCP configurations
-    ├── mcp.json.example  # Example MCP configuration
-    └── mcp.json          # Your custom MCP configuration (gitignored)
-```
-
-## 🛠️ Built With
-
-- [Next.js](https://nextjs.org/) - React framework
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [Supabase](https://supabase.com/) - Authentication & Database
-- [Stripe](https://stripe.com/) - Payments
-- [Framer Motion](https://www.framer.com/motion/) - Animations
-
-## 🔧 Configuration
-
-### Tailwind Configuration
-
-The template includes a custom Tailwind configuration with:
-- Custom colors
-- Dark mode support
-- Extended theme options
-- Custom animations
-
-### Authentication
-
-Authentication is handled through Supabase with support for:
-- Email/Password
-- Google OAuth
-- Magic Links
-- Password Reset
-
-### Payment Integration
-
-Stripe integration includes:
-- Subscription management
-- Trial periods
-- Webhook handling
-- Payment status tracking
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Next.js team for the amazing framework
-- Vercel for the deployment platform
-- Tailwind CSS team for the utility-first CSS framework
-- Supabase team for the backend platform
-- Stripe team for the payment infrastructure
-- Cursor team for the AI-powered editor and MCP capabilities
-- Anthropic for Claude AI and Claude Desktop integration
-- MCP framework developers for enabling extended AI capabilities
-
-## 📫 Contact
-
-X - [@ShenSeanChen](https://x.com/ShenSeanChen)
-
-YouTube - [@SeanTechStories](https://www.youtube.com/@SeanTechStories)
-
-Discord - [@Sean's Stories](https://discord.gg/TKKPzZheua)
-
-Instagram - [@SeanTechStories](https://www.instagram.com/sean_tech_stories )
-
-Project Link: [https://github.com/ShenSeanChen/launch-stripe-nextjs-supabase](https://github.com/ShenSeanChen/launch-stripe-nextjs-supabase)
-
-## 🚀 Deploy
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js).
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/your-repo-name)
+Цель: за 1-2 часа с помощью agentic workflow развернуть рабочий SaaS-проект с auth, billing (опционально), и полной инфраструктурой.
 
 ---
 
-Made with 🔥 by [ShenSeanChen](https://github.com/ShenSeanChen)
+## 🎯 Для кого это?
+
+Этот репозиторий создан для:
+
+- **Быстрого тестирования идей** - Запустить MVP за час-два, не тратя время на setup
+- **Обучения через практику** - Полноценный SaaS stack "из коробки"
+- **Agentic workflow** - Оптимизирован под работу с AI-агентами (Cursor, Claude)
+- **Гибкости** - Любая фича (billing, trials, onboarding) включается/выключается флагами
+
+## 💡 Ключевая идея
+
+**Не писать бойлерплейт каждый раз.** 
+
+Вместо того чтобы каждый раз настраивать auth, базу, Stripe, миграции - просто склонируй, включи нужные фичи флагами, и занимайся своей бизнес-логикой.
+
+## 🚀 За что отвечает этот темплейт?
+
+### ✅ Уже работает "из коробки"
+
+- **Auth** - Supabase (email/password + Google OAuth)
+- **Database** - PostgreSQL через Supabase + миграции (воспроизводимо!)
+- **Billing** - Stripe subscriptions + webhooks (опционально)
+- **Trials** - 48-hour trial для новых юзеров (опционально)
+- **UI** - Tailwind CSS v4 + dark mode + responsive
+- **Security** - RLS policies для защиты данных
+- **DX** - TypeScript, ESLint, Vitest, hot reload
+
+### 🎚️ Feature Flags - включай что нужно
+
+```bash
+# .env.local
+NEXT_PUBLIC_ENABLE_BILLING=true    # Stripe subscriptions
+NEXT_PUBLIC_ENABLE_TRIALS=true     # 48-hour trials
+NEXT_PUBLIC_ENABLE_ONBOARDING=true # Onboarding tour
+```
+
+**Варианты использования:**
+- `все true` → Полноценный платный SaaS
+- `все false` → Бесплатное приложение без ограничений
+- `только billing` → Freemium модель
+- `только trials` → Demo с ограничением по времени
+
+## 📦 Что внутри?
+
+```
+GTS_framework/
+├── app/              # Next.js 15 App Router
+├── components/       # React компоненты
+├── supabase/         # Миграции БД (воспроизводимы!)
+│   └── migrations/   # SQL для таблиц + RLS
+├── utils/
+│   └── features.ts   # Feature flags конфигурация
+├── docs/             # Полная документация
+└── .cursor/          # AI-оптимизированные rules и skills
+```
+
+## ⚡ Быстрый старт
+
+```bash
+# 1. Клонируй и установи
+git clone <этот-репо> my-mvp
+cd my-mvp
+npm install
+
+# 2. Подними локальную базу (нужен Docker)
+supabase start
+
+# 3. Скопируй ключи из вывода в .env.local
+cp .env.example .env.local
+# Вставь NEXT_PUBLIC_SUPABASE_URL и ключи из вывода supabase start
+
+# 4. Запусти
+npm run dev
+
+# 5. Открой http://localhost:3000
+```
+
+**Готово!** Auth работает, база настроена, миграции применены.
+
+👉 **Подробный гайд:** [docs/quickstart.md](./docs/quickstart.md)
+
+## 🎓 Как это использовать?
+
+### Сценарий 1: Быстрый прототип (без billing)
+
+```bash
+# .env.local
+NEXT_PUBLIC_ENABLE_BILLING=false
+NEXT_PUBLIC_ENABLE_TRIALS=false
+```
+
+**Результат:** Простое приложение с auth, можно сразу добавлять свою логику.
+
+### Сценарий 2: Full SaaS с оплатой
+
+```bash
+# .env.local
+NEXT_PUBLIC_ENABLE_BILLING=true
+NEXT_PUBLIC_ENABLE_TRIALS=true
+
+# Добавь Stripe ключи
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+```
+
+**Результат:** Trial 48ч → платная подписка → доступ. Stripe webhooks работают.
+
+### Сценарий 3: Agentic development
+
+Используй `.cursor/skills/` и `.cursor/commands/` для автоматизации:
+
+- `/speckit.specify` - Создать спецификацию фичи
+- `/speckit.design` - Сгенерировать UI mock
+- `/speckit.implement` - Реализовать фичу
+
+## 🔧 Архитектура
+
+### Database Schema (Supabase)
+
+Миграции в `supabase/migrations/`:
+
+- `users` - профили юзеров (soft-delete)
+- `subscriptions` - Stripe subscriptions
+- `user_trials` - Trial periods
+- `user_preferences` - настройки + onboarding
+
+**Важно:** Схема применяется автоматически при `supabase start` или `supabase db push`.
+
+### Feature Flags
+
+Проверка в коде:
+
+```typescript
+import { FEATURES } from '@/utils/features';
+
+if (FEATURES.BILLING) {
+  // показать Stripe checkout
+}
+
+if (FEATURES.TRIALS) {
+  // проверить trial status
+}
+```
+
+### Security
+
+- **RLS** - Row Level Security включен на всех таблицах
+- **Service role** - только для webhooks и admin операций
+- **User data** - пользователь видит только свои данные
+
+## 📖 Документация
+
+| Документ | Что внутри |
+|----------|------------|
+| [📖 INDEX.md](./docs/INDEX.md) | Полный индекс документации |
+| [⚡ quickstart.md](./docs/quickstart.md) | Setup за 5 шагов + smoke test |
+| [🎚️ feature-flags.md](./docs/feature-flags.md) | Как включать/выключать фичи |
+| [🗄️ supabase.md](./docs/supabase.md) | Работа с базой и миграциями |
+| [🔧 core-implementation.md](./docs/core-implementation.md) | Технические детали |
+
+## 🤖 AI Agent Workflow
+
+Этот репо заточен под работу с AI:
+
+- **`.cursor/commands/`** - Spec Kit команды (`/speckit.specify`, `/speckit.implement`)
+- **`.cursor/skills/`** - TDD loop, копирование UI компонентов
+- **`.cursor/rules/`** - Правила для React, TypeScript, Supabase, Tailwind
+- **Clean structure** - Агенты быстро ориентируются
+
+**Пример:**
+```
+/speckit.specify user-dashboard
+→ Агент создаёт спеку
+→ Ревью
+→ /speckit.implement
+→ Готовая фича с кодом + тестами
+```
+
+## 🔑 Ключевые файлы
+
+| Файл | Зачем |
+|------|-------|
+| `utils/features.ts` | Feature flags конфигурация |
+| `supabase/migrations/` | SQL миграции для БД |
+| `utils/supabase/` | Client/server Supabase helpers |
+| `contexts/AuthContext.tsx` | Auth state + методы |
+| `hooks/useSubscription.ts` | Subscription logic |
+| `app/api/stripe/webhook/` | Stripe events handler |
+
+## 🛠️ Tech Stack
+
+- **Next.js 15** - App Router, React 19, Server Components
+- **TypeScript** - Строгая типизация
+- **Supabase** - Auth + PostgreSQL + RLS
+- **Stripe** - Payments (опционально)
+- **Tailwind CSS v4** - Styling
+- **Vitest** - Testing
+- **Framer Motion** - Animations
+
+## 🎯 Типичный workflow
+
+1. **Склонировать темплейт** для новой идеи
+2. **Запустить** `supabase start && npm run dev`
+3. **Настроить флаги** под конкретный MVP
+4. **Добавить доменную логику** (твои таблицы, компоненты, API)
+5. **Задеплоить** на Vercel + production Supabase
+
+Весь SaaS-скелет уже работает, фокус только на бизнес-логике.
+
+## ⚠️ Что НЕ включено (добавляй по необходимости)
+
+- Email notifications (есть заготовка Supabase email)
+- Admin dashboard (только user-facing UI)
+- Multi-tenancy (single-tenant по умолчанию)
+- Advanced analytics (есть заготовка PostHog)
+
+См. [docs/technical-debt.md](./docs/technical-debt.md) для запланированных улучшений.
+
+## 📝 FAQ
+
+**Q: Это только для платных SaaS?**  
+A: Нет, можно выключить billing и использовать просто как auth + база.
+
+**Q: Как добавить свои таблицы в БД?**  
+A: Создай новую миграцию: `supabase migration new add_my_table`
+
+**Q: Можно использовать без Stripe?**  
+A: Да, установи `NEXT_PUBLIC_ENABLE_BILLING=false`
+
+**Q: Нужно знать Supabase CLI?**  
+A: Базово: `supabase start` (запустить), `supabase db reset` (сбросить). Всё.
+
+---
+
+**Made for rapid SaaS prototyping with AI agents** 🚀

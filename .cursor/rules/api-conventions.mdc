@@ -1,0 +1,167 @@
+---
+globs: "app/api/**/*.ts"
+alwaysApply: false
+---
+
+# API Route Conventions
+
+## Route Handler Structure
+
+```tsx
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { withCors } from '@/utils/cors';
+import { logger } from '@/utils/logger';
+
+export const POST = withCors(async function POST(request: NextRequest) {
+  try {
+    // 1. Parse and validate input
+    const { param } = await request.json();
+    if (!param) {
+      return NextResponse.json({ error: 'Param is required' }, { status: 400 });
+    }
+
+    // 2. Business logic
+    const result = await doSomething(param);
+
+    // 3. Return success response
+    return NextResponse.json({ success: true, data: result });
+  } catch (error) {
+    logger.error({ error }, 'Error in POST handler');
+    return NextResponse.json(
+      { 
+        error: 'Failed to process request', 
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+});
+```
+
+## CORS Handling
+
+All API routes should use `withCors` wrapper:
+
+```tsx
+import { withCors } from '@/utils/cors';
+
+export const POST = withCors(async function POST(request: NextRequest) {
+  // handler logic
+});
+```
+
+## Error Handling
+
+### Standard Error Response Format:
+```tsx
+return NextResponse.json(
+  { 
+    error: 'Human-readable error message',
+    details: error instanceof Error ? error.message : 'Unknown error'
+  },
+  { status: 500 }
+);
+```
+
+### Input Validation:
+```tsx
+const { param } = await request.json();
+if (!param) {
+  return NextResponse.json({ error: 'Param is required' }, { status: 400 });
+}
+```
+
+### Catch Block Pattern:
+```tsx
+catch (error) {
+  logger.error({ context: 'operation_name', error }, 'Error description');
+  return NextResponse.json({ error: 'Message', details: ... }, { status: 500 });
+}
+```
+
+## Logging
+
+Use structured logging with context:
+
+```tsx
+import { logger, logStripe, logAuth } from '@/utils/logger';
+
+// General logging
+logger.info({ userId, action: 'delete' }, 'Starting account deletion');
+logger.error({ userId, error }, 'Account deletion failed');
+
+// Stripe-specific
+logStripe.webhook('event_type', { subscriptionId });
+logStripe.error('operation', error);
+
+// Auth-specific
+logAuth.success('login', { userId });
+logAuth.error('login', { error });
+```
+
+## Database Operations
+
+### Use Admin Client for API Routes:
+```tsx
+import { supabaseAdmin } from '@/utils/supabase-admin';
+
+const { data, error } = await supabaseAdmin
+  .from('table_name')
+  .select('*')
+  .eq('id', id);
+
+if (error) {
+  logger.error({ error }, 'Database query failed');
+  throw error;
+}
+```
+
+### Handle Supabase Errors:
+```tsx
+if (error && error.code !== 'PGRST116') {  // PGRST116 = no rows
+  logger.error({ error }, 'Database error');
+  throw error;
+}
+```
+
+## Response Patterns
+
+### Success Response:
+```tsx
+return NextResponse.json({ success: true });
+return NextResponse.json({ status: 'success', data: result });
+```
+
+### Error Response:
+```tsx
+return NextResponse.json({ error: 'Message' }, { status: 400 });  // Bad request
+return NextResponse.json({ error: 'Message' }, { status: 500 });  // Server error
+```
+
+## Environment Variables
+
+Access with non-null assertion (validated at startup):
+```tsx
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+```
+
+## Query Parameters
+
+```tsx
+const { searchParams } = new URL(request.url);
+const userId = searchParams.get('userId');
+
+if (!userId) {
+  return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+}
+```
+
+## Best Practices
+
+1. **Always wrap with `withCors`** for API routes
+2. **Use structured logging** - include context in log objects
+3. **Validate input early** - return 400 for missing/invalid params
+4. **Use `supabaseAdmin`** in API routes (not regular client)
+5. **Type-safe error handling** - check `error instanceof Error`
+6. **Return consistent JSON** - `{ error, details }` or `{ success, data }`

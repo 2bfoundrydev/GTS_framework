@@ -37,7 +37,7 @@ export default function PaymentPage() {
         </p>
         <button
           onClick={() => router.push('/pay')}
-          className="bg-primary hover:bg-primary-darker text-white px-6 py-2 rounded-lg"
+          className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-2 rounded-lg"
         >
           Retry
         </button>
@@ -54,7 +54,7 @@ export default function PaymentPage() {
         </p>
         <button
           onClick={() => router.push('/profile')}
-          className="bg-primary hover:bg-primary-darker text-white px-6 py-2 rounded-lg"
+          className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-2 rounded-lg"
         >
           View Subscription
         </button>

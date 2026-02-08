@@ -1,0 +1,106 @@
+---
+description: "Supabase client usage, auth patterns, and database query conventions"
+alwaysApply: false
+---
+
+# Supabase Rules
+
+## Client vs Server
+
+### Client-side (`utils/supabase/client.ts`)
+```tsx
+import { createClient } from '@/utils/supabase/client';
+
+// Use in client components
+'use client';
+const supabase = createClient();
+```
+
+**Use for:**
+- Client components with 'use client'
+- Real-time subscriptions
+- User interactions
+- Auth state management
+
+### Server-side (`utils/supabase/server.ts`)
+```tsx
+import { createClient } from '@/utils/supabase/server';
+
+// Use in server components
+const supabase = await createClient();
+```
+
+**Use for:**
+- Server components
+- API routes
+- Server actions
+- SSR data fetching
+
+### Admin Client (`utils/supabase-admin.ts`)
+```tsx
+import { createClient as createAdminClient } from '@/utils/supabase-admin';
+
+const supabase = createAdminClient();
+```
+
+**Use for:**
+- Bypassing RLS (Row Level Security)
+- Admin operations
+- API routes that need elevated permissions
+- Use with caution - has full database access
+
+## Authentication
+
+### Current User
+```tsx
+const { data: { user } } = await supabase.auth.getUser();
+```
+
+### Auth Context
+```tsx
+import { useAuth } from '@/contexts/AuthContext';
+
+const { user, signOut, isLoading } = useAuth();
+```
+
+## Database Queries
+
+### Standard Query
+```tsx
+const { data, error } = await supabase
+  .from('table_name')
+  .select('*')
+  .eq('id', userId)
+  .single();
+```
+
+### With Error Handling
+```tsx
+try {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+    
+  if (error) throw error;
+  return data;
+} catch (error) {
+  console.error('Database error:', error);
+  return null;
+}
+```
+
+## Important Tables
+
+- `users` - User profiles
+- `subscriptions` - Stripe subscription data
+- `user_preferences` - User settings (e.g., onboarding status)
+
+## Best Practices
+
+1. **Always handle errors** - check for `error` in response
+2. **Use typed queries** when possible
+3. **Leverage RLS** - don't bypass unless necessary
+4. **Use `.single()` for one result** - returns object instead of array
+5. **Use `.maybeSingle()`** - when result might not exist (no error if not found)

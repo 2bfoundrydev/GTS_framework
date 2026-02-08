@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useMemo } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { supabase } from '@/utils/supabase';
+import { createClient } from '@/utils/supabase/client';
 
 interface OnboardingTourProps {
   isFirstTime: boolean;
@@ -22,7 +22,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
       title: "Start with a Template",
       description: (
         <div className="flex flex-col gap-2">
-          <p>Click  <button className="px-2 py-1 text-xs rounded bg-primary hover:bg-primary-darker text-white w-fit">Use Template</button> to import one of our pre-made recipes into your collection.</p>
+          <p>Click  <button className="px-2 py-1 text-xs rounded bg-brand-500 hover:bg-brand-600 text-white w-fit">Use Template</button> to import one of our pre-made recipes into your collection.</p>
           
         </div>
       ),
@@ -33,7 +33,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
       description: (
         <div className="flex flex-col gap-2 items-center">
           <p>Click the microphone to START speaking.</p>
-          <button className="w-12 h-12 mt-2 rounded-full flex items-center justify-center bg-primary hover:bg-primary-darker shadow-lg"><span className="text-xl text-white">🎤</span></button>
+          <button className="w-12 h-12 mt-2 rounded-full flex items-center justify-center bg-brand-500 hover:bg-brand-600 shadow-lg"><span className="text-xl text-white">🎤</span></button>
         </div>
       ),
       targetClass: "ai-assistant-button"
@@ -43,7 +43,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
         description: (
             <div className="flex flex-col gap-2 items-center">
               <p>Click the red button to STOP voice interaction.</p>
-              <button className="w-12 h-12 mt-2 rounded-full flex items-center justify-center bg-red-500 hover:bg-red-600 shadow-lg"><span className="text-xl text-white">⏹</span></button>
+              <button className="w-12 h-12 mt-2 rounded-full flex items-center justify-center bg-error-500 hover:bg-error-600 shadow-lg"><span className="text-xl text-white">⏹</span></button>
             </div>
           ),
           targetClass: "ai-assistant-button"
@@ -53,7 +53,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
       description: (
         <div className="flex flex-col gap-2 items-center">
           <p>Click the button below to add your own recipe:</p>
-          <button className="w-48 mt-2 sm:w-auto px-4 py-2 rounded-lg flex items-center justify-center gap-2 bg-primary hover:bg-primary-darker text-white">
+          <button className="w-48 mt-2 sm:w-auto px-4 py-2 rounded-lg flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -67,6 +67,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
 
   useEffect(() => {
     const checkOnboardingStatus = async () => {
+      const supabase = createClient();
       const user = (await supabase.auth.getUser()).data.user;
       
       if (!user) {
@@ -114,6 +115,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
   const handleComplete = async () => {
     setIsOpen(false);
     
+    const supabase = createClient();
     const user = (await supabase.auth.getUser()).data.user;
     
     if (!user) {
@@ -143,9 +145,9 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
     const element = document.querySelector(`.${className}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      element.classList.add('ring-4', 'ring-primary', 'ring-opacity-50', 'transition-all', 'duration-500');
+      element.classList.add('ring-4', 'ring-brand-500/50', 'transition-all', 'duration-500');
       setTimeout(() => {
-        element.classList.remove('ring-4', 'ring-primary', 'ring-opacity-50');
+        element.classList.remove('ring-4', 'ring-brand-500/50', 'transition-all', 'duration-500');
       }, 2000);
     }
   };
@@ -191,7 +193,7 @@ export function OnboardingTour({ isFirstTime, onComplete }: OnboardingTourProps)
                 </span>
                 <button
                   onClick={handleNext}
-                  className="bg-primary hover:bg-primary-dark text-white px-4 py-2 ml-2 rounded-full"
+                  className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 ml-2 rounded-full"
                 >
                   {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
                 </button>

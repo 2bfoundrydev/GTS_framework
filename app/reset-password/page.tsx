@@ -65,7 +65,7 @@ function ResetPasswordContent() {
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 text-red-500 p-4 rounded-lg">
+          <div className="bg-error-50 dark:bg-error-900/30 text-error-500 p-4 rounded-lg">
             {error}
             <button
               onClick={handleResetPassword}
@@ -77,7 +77,7 @@ function ResetPasswordContent() {
         )}
 
         {success ? (
-          <div className="bg-green-50 dark:bg-green-900/30 text-green-500 p-4 rounded-lg">
+          <div className="bg-success-50 dark:bg-success-900/30 text-success-500 p-4 rounded-lg">
             Reset link has been sent to your email address. Please check your inbox.
           </div>
         ) : (

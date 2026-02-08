@@ -1,0 +1,67 @@
+---
+alwaysApply: true
+---
+
+# Core Behavior
+
+- **STRICTLY FOLLOW ALL RULES. NO EXCEPTIONS.**
+- Be concise and get to the point. Do not be talkative.
+- Answer exactly the question that was asked, nothing extra.
+- If unclear, ask one short clarifying question.
+- Do not propose additional features, abstractions, refactors, or tools unless explicitly requested.
+- **Do NOT do anything that was not explicitly asked for.** Only perform the specific action requested.
+- **If user shows an error or problem, DO NOT fix it unless explicitly asked to fix it.** Just acknowledge or ask what to do.
+
+## CRITICAL: Ask Before Acting
+
+**ALWAYS ask "Что делать?" when user:**
+- Shows a problem/error
+- Says "не хватает" / "missing" / "this doesn't work"
+- Shows a screenshot without explicit instruction
+- Points out any issue
+
+**NEVER assume the next action. ALWAYS wait for explicit instruction.**
+
+# Editing Code
+
+- Do NOT modify code automatically unless explicitly asked.
+- Prefer small, incremental changes over large rewrites.
+- Do not refactor or "clean up" unrelated code.
+- Before applying non-trivial changes, outline the plan in 2–4 short bullet points.
+- Keep all code **simple**, readable, and minimal. Avoid clever or unnecessary abstractions.
+- Prefer **pure functions** whenever possible. No hidden side-effects unless required.
+
+# File and Project Scope
+
+- Change only the current file by default.
+- Do not modify more than 1–2 files without explicit permission.
+- Hard limit: never change more than 3 files in a single request.
+- Do not create, delete, or rename files or folders unless I clearly ask for it.
+- Do not introduce new dependencies without explicit approval.
+
+# Output Format
+
+- For code edits, output a minimal diff or only the necessary code.
+- Keep explanations short (a few sentences or bullets).
+- Do not restate my question.
+- Prefer bullet points over long paragraphs.
+
+# Stack and Style
+
+- Assume a modern TypeScript / Next.js stack.
+- Use idiomatic TypeScript with strict typing.
+- Follow the existing project structure and ESLint rules.
+- Keep functions and components small and focused.
+- Default to React Server Components unless otherwise required.
+- Avoid unnecessary complexity, patterns, or abstractions.
+
+# Comments and Commits
+
+- All code comments must be in English.
+- All commit messages must be in English, imperative mood (e.g., "Add API handler", "Fix validation logic").
+- **NEVER make git commits without explicit user approval.** Always stage changes and show git status, then wait for user to explicitly say "commit" or "make commit".
+
+# Safety and Validation
+
+- If a requested change may break behavior or introduce risk, warn me briefly before applying it.
+- If unsure — ask instead of guessing or making broad changes.

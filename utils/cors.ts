@@ -2,10 +2,15 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 function getCorsHeaders(request: NextRequest) {
-  const allowedOrigins = [
-    'http://localhost:3000',
-    "https://NextTemp.vercel.app"
-  ];
+  // Get allowed origins from env or use defaults
+  const envOrigins = process.env.CORS_ALLOWED_ORIGINS;
+  const allowedOrigins = envOrigins
+    ? envOrigins.split(',').map(o => o.trim())
+    : [
+        process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+        'https://NextTemp.vercel.app'
+      ];
+  
   const origin = request.headers.get('origin') || '';
   
   return {
@@ -17,7 +22,7 @@ function getCorsHeaders(request: NextRequest) {
   };
 }
 
-export function withCors(handler: Function) {
+export function withCors(handler: (request: NextRequest) => Promise<NextResponse>) {
   return async function corsHandler(request: NextRequest) {
     // Handle preflight requests
     if (request.method === 'OPTIONS') {

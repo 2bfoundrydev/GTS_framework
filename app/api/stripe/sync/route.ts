@@ -3,16 +3,17 @@ import type { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/utils/supabase-admin';
 import { withCors } from '@/utils/cors';
+import { logStripe } from '@/utils/logger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const POST = withCors(async function POST(request: NextRequest) {
   try {
-    console.log('Starting sync process...');
+    logStripe.webhook('sync_start', {});
     const { subscriptionId } = await request.json();
     
     if (!subscriptionId) {
-      console.error('No subscription ID provided');
+      logStripe.error('sync', 'No subscription ID provided');
       return NextResponse.json({ error: 'Subscription ID is required' }, { status: 400 });
     }
 
@@ -24,20 +25,20 @@ export const POST = withCors(async function POST(request: NextRequest) {
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Error checking subscription:', checkError);
+      logStripe.error('sync_check', checkError);
       throw checkError;
     }
 
     // If no subscription exists in database, we need to create it
     if (!existingSubscription) {
-      console.log('No existing subscription found, fetching from Stripe...');
+      logStripe.webhook('sync_create', { subscriptionId });
       const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
       
       // Get customer details to get user_id
       const customerResponse = await stripe.customers.retrieve(stripeSubscription.customer as string);
       
       if (customerResponse.deleted) {
-        console.error('Customer has been deleted:', stripeSubscription.customer);
+        logStripe.error('sync_customer', `Customer deleted: ${stripeSubscription.customer}`);
         throw new Error('Invalid customer');
       }
 
@@ -45,7 +46,7 @@ export const POST = withCors(async function POST(request: NextRequest) {
       const userId = customer.metadata?.user_id;
 
       if (!userId) {
-        console.error('No user_id in customer metadata:', customer.id);
+        logStripe.error('sync_metadata', `No user_id for customer: ${customer.id}`);
         throw new Error('No user_id found in customer metadata');
       }
 
@@ -65,7 +66,7 @@ export const POST = withCors(async function POST(request: NextRequest) {
         });
 
       if (insertError) {
-        console.error('Error creating subscription:', insertError);
+        logStripe.error('sync_insert', insertError);
         throw insertError;
       }
     } else {
@@ -82,55 +83,17 @@ export const POST = withCors(async function POST(request: NextRequest) {
         .eq('stripe_subscription_id', subscriptionId);
 
       if (updateError) {
-        console.error('Error updating subscription:', updateError);
+        logStripe.error('sync_update', updateError);
         throw updateError;
       }
     }
 
     return NextResponse.json({ status: 'success' });
   } catch (error) {
-    console.error('Subscription sync failed:', error);
+    logStripe.error('sync', error);
     return NextResponse.json({ 
       error: 'Failed to sync subscription',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }); 
-
-// import { NextResponse } from 'next/server';
-// import Stripe from 'stripe';
-// import { supabaseAdmin } from '@/utils/supabase-admin';
-
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-// export async function POST(req: Request) {
-//   try {
-//     const { subscriptionId } = await req.json();
-    
-//     // Fetch current subscription data from Stripe
-//     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    
-//     // Update Supabase with the latest Stripe data
-//     const { error } = await supabaseAdmin
-//       .from('subscriptions')
-//       .update({
-//         status: subscription.status,
-//         cancel_at_period_end: subscription.cancel_at_period_end,
-//         current_period_end: subscription.status === 'canceled' 
-//           ? new Date().toISOString() 
-//           : new Date(subscription.current_period_end * 1000).toISOString(),
-//         updated_at: new Date().toISOString()
-//       })
-//       .eq('stripe_subscription_id', subscriptionId);
-
-//     if (error) throw error;
-
-//     return NextResponse.json({ status: 'success', subscription });
-//   } catch (error) {
-//     console.error('Subscription sync failed:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to sync subscription' },
-//       { status: 500 }
-//     );
-//   }
-// } 

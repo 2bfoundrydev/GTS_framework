@@ -1,0 +1,16 @@
+# Secrets
+.env
+.env.*
+
+# Build output
+.next/
+
+# Dependencies
+node_modules/
+
+# Binary assets
+public/images/
+
+# Noise in context
+package-lock.json
+initial_supabase_table_schema.sql

@@ -1,12 +1,12 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/utils/supabase';
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { FEATURES } from '@/utils/features';
 import { 
   Session, 
   User, 
-  SupabaseClient, 
-  AuthTokenResponse 
+  SupabaseClient
 } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -32,20 +32,21 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-interface SubscriptionPayload {
-  new: {
-    user_id: string;
-    [key: string]: any;
-  };
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const supabase = useMemo(() => createClient(), []);
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubscriber, setIsSubscriber] = useState(false);
 
   const checkSubscription = useCallback(async (userId: string) => {
+    // If billing is disabled, always set subscriber to false
+    if (!FEATURES.BILLING) {
+      setIsSubscriber(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('subscriptions')
@@ -61,79 +62,107 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // console.log("AuthContext - subscription data: ", data)
-
       const isValid = data && 
         ['active', 'trialing'].includes(data.status) && 
         new Date(data.current_period_end) > new Date();
-      // console.log("AuthContext -  isValid: ", data)
 
       setIsSubscriber(!!isValid);
-      console.log("AuthContext -  set isSubscriber: ", isSubscriber)
     } catch (error) {
       console.error('Subscription check error:', error);
       setIsSubscriber(false);
     }
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - supabase is stable from useMemo
 
   useEffect(() => {
     let mounted = true;
-    console.log("AuthContext - mounted useEffect:", mounted);
-    
+    let unsubscribe: (() => void) | null = null;
+
     const initializeAuth = async () => {
+      setIsLoading(true);
+
       try {
-        setIsLoading(true);
-        console.log("AuthContext - Starting Try in InitializeAuth!");
-
-        // // First, get initial session
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Add timeout to getSession to prevent infinite hang
+        const sessionPromise = supabase.auth.getSession().catch((err) => {
+          // Silently catch network errors from getSession to prevent console spam
+          return { data: { session: null }, error: { message: err.message || 'Network error' } };
+        });
         
-        if (error || !mounted) {
-          setIsLoading(false);
-          return;
-        }
-
-        // Update initial state
-        setSession(session);
-        const currentUser = session?.user ?? null;
-        setUser(currentUser);
-
-        if (currentUser) {
-          await checkSubscription(currentUser.id);
-        }
-        
-        // Then set up listener for future changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (_event, newSession) => {
-            if (!mounted) return;
-            
-            const newUser = newSession?.user ?? null;
-            setSession(newSession);
-            setUser(newUser);
-            
-            if (newUser) {
-              await checkSubscription(newUser.id);
-            } else {
-              setIsSubscriber(false);
-            }
-          }
+        const timeoutPromise = new Promise<{ data: { session: null }, error: { message: string } }>((resolve) => 
+          setTimeout(() => resolve({ data: { session: null }, error: { message: 'getSession timeout' } }), 5000)
         );
-
-        // Only set loading to false after everything is initialized
-        if (mounted) setIsLoading(false);
         
-        return () => {
-          mounted = false;
+        const result = await Promise.race([sessionPromise, timeoutPromise]);
+        const session = result.data.session;
+        const error = result.error;
+
+        if (!mounted) return;
+
+        if (error) {
+          // Silently handle getSession errors - graceful degradation
+          if (error.message !== 'getSession timeout' && error.message !== 'Network error') {
+            console.error('Auth initialization error (getSession):', error);
+          }
+          // Continue with no session
+          setSession(null);
+          setUser(null);
+        } else {
+          // Update initial state
+          setSession(session);
+          const currentUser = session?.user ?? null;
+          setUser(currentUser);
+
+          if (currentUser) {
+            await checkSubscription(currentUser.id);
+          }
+        }
+
+        if (!mounted) return;
+
+        // Then set up listener for future changes
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+          if (!mounted) return;
+
+          const newUser = newSession?.user ?? null;
+          setSession(newSession);
+          setUser(newUser);
+
+          if (newUser) {
+            await checkSubscription(newUser.id);
+          } else {
+            setIsSubscriber(false);
+          }
+        });
+
+        unsubscribe = () => {
           subscription.unsubscribe();
         };
       } catch (error) {
-        console.error("Auth initialization error:", error);
-        if (mounted) setIsLoading(false);
+        if (mounted) {
+          console.error('Auth initialization error:', error);
+          // Ensure we have a clean state on error
+          setSession(null);
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     initializeAuth();
-  }, [checkSubscription]);
+
+    return () => {
+      mounted = false;
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount - checkSubscription and supabase are stable
 
   const value = {
     user,
@@ -224,33 +253,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         redirectTo: `${window.location.origin}/update-password`
       });
       if (error) throw error;
-    },
-    deleteAccount: async () => {
-      // First delete user data from any related tables
-      const { error: dataError } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', user?.id);
-      
-      if (dataError) throw dataError;
-
-      // Then delete the user's subscription if it exists
-      const { error: subscriptionError } = await supabase
-        .from('subscriptions')
-        .delete()
-        .eq('user_id', user?.id);
-
-      if (subscriptionError) throw subscriptionError;
-
-      // Finally delete the user's auth account
-      const { error: authError } = await supabase.auth.admin.deleteUser(
-        user?.id as string
-      );
-
-      if (authError) throw authError;
-
-      // Sign out after successful deletion
-      await supabase.auth.signOut();
     },
     isSubscriber,
   };

@@ -3,7 +3,7 @@
 import posthog from 'posthog-js'
 
 type EventProperties = {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export const trackEvent = (eventName: string, properties?: EventProperties) => {
