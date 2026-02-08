@@ -1,30 +1,145 @@
-# GTS Framework - Architecture Guide
+# PersonalHub - Project Context & Architecture Guide
 
 **Version:** 1.0  
 **Last Updated:** 2026-02-08
 
 ---
 
-## What This Repo Is
+## Project Context (PersonalHub)
 
-**GTS Framework** is a Next.js 15 App Router SaaS starter template designed for **rapid idea validation**. It provides a production-ready foundation with authentication, subscription billing, trial management, and user onboarding — all configurable via feature flags.
+**PersonalHub** is a lightweight personal web service: a single place to store and manage three kinds of personal information:
 
-**Philosophy:** "Optional Core" — you can run this as a full SaaS with payments, as a free app, or anything in between by toggling environment variables.
+- **Notes**: short text entries (decisions, ideas, summaries, snippets)
+- **Links**: saved URLs with minimal metadata (find + reuse later)
+- **Files**: uploaded files stored in an external storage backend (S3-compatible)
 
-**Target Use Case:** Validate your MVP/idea in days, not weeks. Fork this template, configure feature flags, add your domain logic, and deploy.
+**Primary goal:** replace scattered personal knowledge (folders, chats, bookmarks, ad-hoc docs) with one consistent interface and a simple, reliable data model.
+
+**Target user (MVP):** a single authenticated user (private by default). Multi-user is a possible later evolution, but not in MVP scope.
+
+### MVP scope (must work)
+
+#### Notes (MVP)
+- Create note: **title required**, body optional
+- List notes (newest first)
+- View note details
+- Delete note (with confirmation)
+- Basic validation + empty/loading/error states
+
+#### Links (MVP)
+- Save link: **URL required**, title optional, description optional
+- List links (newest first)
+- View link details (clickable URL)
+- Delete link (with confirmation)
+- Basic validation (valid URL) + empty/loading/error states
+
+#### Files (MVP)
+- Upload file to **pluggable S3-compatible** storage (AWS S3 / Cloudflare R2 / MinIO)
+- List files (newest first) with: filename, size, upload time, mime type
+- Download/open via **safe link** (presigned URL with short TTL or authenticated download endpoint)
+- Delete file record and storage object (with confirmation)
+- Basic upload error handling (too large, unsupported type if configured)
+
+### Explicitly out of scope (MVP)
+- Full-text search
+- Tags/folders/collections
+- Editing notes/links (create + delete only)
+- Sharing / multi-user permissions
+- File versioning
+- Rich text / markdown editor
+- Automated link preview scraping (unless trivial)
+
+### Security rules (MVP)
+- All data is private by default
+- User can access **only their own** notes/links/files (RLS enforced)
+- No storage secrets in client/UI
+- Validate inputs (URL format, text length limits, filenames)
+
+### Observability (MVP)
+- Log server-side errors for create/delete/upload/download flows
+- (Optional) Track events:
+  - `note_created`, `link_created`, `file_uploaded`, `file_deleted`
+- Keep request correlation if supported by the existing logging setup
+
+### Spec-driven workflow (required)
+1. Create a feature spec (single source of truth)
+2. Run design step to generate:
+   - `specs/<feature-id>/ui.md`
+   - `/preview/<feature-id>` mock-only UI route
+3. Human review in preview route
+4. Only after UI approval: plan → implement → tests
+
+**Rules:**
+- No scope expansion beyond the spec
+- Resolve ambiguities by updating the spec (do not guess in code)
+- Tests must cover acceptance criteria
 
 ---
 
-## Tech Stack
+## Tech Stack (current repo baseline)
 
 - **Frontend/Backend:** Next.js 15 (App Router), React 19, TypeScript
 - **Styling:** Tailwind CSS v4 with custom theme + TailAdmin UI components (copy-on-demand)
 - **Database/Auth:** Supabase (Postgres + Auth + Realtime)
   - Local development via Supabase CLI + Docker
   - Migrations tracked in `supabase/migrations/`
-- **Payments:** Stripe (checkout + webhooks)
-- **Analytics:** Vercel Analytics (default), PostHog (optional, commented out)
+- **File storage (MVP):** S3-compatible object storage (AWS S3 / Cloudflare R2 / MinIO) via server-side credentials
+- **Analytics:** PostHog (optional)
 - **Logging:** Pino (structured JSON logging)
+
+---
+
+## Product UX (MVP)
+
+PersonalHub uses a simple navigation model optimized for speed and clarity:
+
+- **Hub page** with three sections/tabs:
+  - Notes
+  - Links
+  - Files
+- Each section supports:
+  - list view (newest first)
+  - create/upload action
+  - detail view
+  - delete action (with confirmation)
+- Consistent UI states across the app:
+  - empty
+  - loading
+  - error
+  - normal/success
+
+---
+
+## Conceptual Data Model (PersonalHub)
+
+All records are scoped to the authenticated user.
+
+### Note
+- `id`
+- `user_id`
+- `title` (required)
+- `body` (optional)
+- `created_at`
+
+### Link
+- `id`
+- `user_id`
+- `url` (required)
+- `title` (optional)
+- `description` (optional)
+- `created_at`
+
+### File
+- `id`
+- `user_id`
+- `original_name`
+- `mime_type`
+- `size_bytes`
+- `storage_provider` (e.g., `s3`)
+- `storage_key` (object key/path)
+- `created_at`
+
+**Access rule:** user can only read/write their own records (RLS).
 
 ---
 
@@ -34,7 +149,7 @@
 GTS_framework/
 ├── app/                          # Next.js App Router
 │   ├── api/                      # API route handlers
-│   │   ├── stripe/               # Stripe endpoints (webhook, cancel, reactivate, sync, test)
+│   │   ├── stripe/               # (legacy template) Stripe endpoints (disabled for PersonalHub MVP)
 │   │   └── user/                 # User management (delete account)
 │   ├── auth/callback/            # OAuth callback handler
 │   ├── dashboard/                # Protected dashboard page
@@ -77,7 +192,7 @@ GTS_framework/
 │   └── README.md                 # Local Supabase setup guide
 │
 ├── docs/                         # Comprehensive documentation
-│   ├── README.md                 # Documentation index
+│   ├── INDEX.md                  # Documentation index
 │   ├── quickstart.md             # 5-step setup + smoke tests
 │   ├── feature-flags.md          # Feature flag details + use cases
 │   ├── core-implementation.md    # Architecture decisions
@@ -93,6 +208,13 @@ GTS_framework/
 ---
 
 ## Core Flows (Mental Model)
+
+> **Important (PersonalHub):** This repo started from a SaaS template, so billing/trials/Stripe flows still exist in code,
+> but **PersonalHub MVP does not use them**. Keep these flags disabled unless explicitly requested:
+>
+> - `NEXT_PUBLIC_ENABLE_BILLING=false`
+> - `NEXT_PUBLIC_ENABLE_TRIALS=false`
+> - `NEXT_PUBLIC_ENABLE_ONBOARDING=false`
 
 ### 1. Authentication Flow
 
@@ -129,7 +251,52 @@ GTS_framework/
 
 ---
 
-### 3. Access Gating (SaaS Mode)
+### 3. PersonalHub - Notes Flow (MVP)
+
+**Pages/UX (target):**
+- Notes list (newest first)
+- Note details page
+- Create note modal/page
+- Delete note confirmation
+
+**Rules:**
+- `title` required, `body` optional
+- Only owner can access (RLS)
+
+---
+
+### 4. PersonalHub - Links Flow (MVP)
+
+**Pages/UX (target):**
+- Links list (newest first)
+- Link details page (clickable URL)
+- Create link modal/page
+- Delete link confirmation
+
+**Rules:**
+- `url` required, validate URL format
+- `title`/`description` optional
+- Only owner can access (RLS)
+
+---
+
+### 5. PersonalHub - Files Flow (MVP)
+
+**Upload:**
+- Client uploads via authenticated flow (no secrets exposed)
+- File stored in S3-compatible backend (AWS S3 / Cloudflare R2 / MinIO)
+- Store metadata in DB (name, mime, size, storage provider/key, timestamps)
+
+**Download:**
+- Use **presigned URLs** with short TTL **or** authenticated download endpoint that streams the object
+
+**Delete:**
+- Confirmation required
+- Delete DB record and storage object
+
+---
+
+### 6. (Legacy template) Access Gating (SaaS Mode)
 
 **When enabled** (`FEATURES.BILLING=true` or `FEATURES.TRIALS=true`):
 
@@ -150,7 +317,7 @@ Dashboard and other protected features require **either**:
 
 ---
 
-### 4. Billing & Subscriptions (Stripe)
+### 7. (Legacy template) Billing & Subscriptions (Stripe)
 
 **Flow:**
 1. User clicks "Subscribe" → Stripe Checkout opens (via `StripeBuyButton` component)
@@ -181,7 +348,7 @@ Dashboard and other protected features require **either**:
 
 ---
 
-### 5. Trial System (DB-Driven)
+### 8. (Legacy template) Trial System (DB-Driven)
 
 **Design:** Trials are managed **entirely in the database** (not client-side), making them tamper-proof.
 
@@ -201,7 +368,7 @@ Dashboard and other protected features require **either**:
 
 ---
 
-### 6. Onboarding
+### 9. (Legacy template) Onboarding
 
 **Feature:** Track if user has completed onboarding tour (stored in `public.user_preferences.has_completed_onboarding`)
 
